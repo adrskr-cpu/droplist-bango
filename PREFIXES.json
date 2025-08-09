@@ -1,0 +1,614 @@
+[
+  {
+    "pre_azon": 1,
+    "pre_name": "Forced",
+    "pre_rev": 1,
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 2,
+    "pre_name": "Unlawful",
+    "pre_rev": 2,
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 3,
+    "pre_name": "Harsh",
+    "pre_rev": 3,
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 4,
+    "pre_name": "Strong mans",
+    "pre_rev": 4,
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 5,
+    "pre_name": "Strongest mans",
+    "pre_rev": 5,
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 6,
+    "pre_name": "Melees",
+    "pre_rev": 6,
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 7,
+    "pre_name": "Bloody fights",
+    "pre_rev": 7,
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 8,
+    "pre_name": "Slaughterous",
+    "pre_rev": 8,
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 9,
+    "pre_name": "Barbaric",
+    "pre_rev": 9,
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 10,
+    "pre_name": "Invincible",
+    "pre_rev": 10,
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 11,
+    "pre_name": "Healthy",
+    "pre_rev": "|1",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 12,
+    "pre_name": "Vigorous",
+    "pre_rev": "|2",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 13,
+    "pre_name": "Heroic",
+    "pre_rev": "|3",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 14,
+    "pre_name": "Vital",
+    "pre_rev": "|4",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 15,
+    "pre_name": "Ablaze",
+    "pre_rev": "|5",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 16,
+    "pre_name": "Iron legs",
+    "pre_rev": "|6",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 17,
+    "pre_name": "Steels",
+    "pre_rev": "|7",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 18,
+    "pre_name": "Limitable",
+    "pre_rev": "|8",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 19,
+    "pre_name": "Infinitely",
+    "pre_rev": "|9",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 20,
+    "pre_name": "Diamond",
+    "pre_rev": "|10",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 21,
+    "pre_name": "Fictional",
+    "pre_rev": "||1",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 22,
+    "pre_name": "Sharp",
+    "pre_rev": "||2",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 23,
+    "pre_name": "Keen",
+    "pre_rev": "||3",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 24,
+    "pre_name": "Ordinary",
+    "pre_rev": "||4",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 25,
+    "pre_name": "Wise",
+    "pre_rev": "||5",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 26,
+    "pre_name": "Mystic",
+    "pre_rev": "||6",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 27,
+    "pre_name": "Worshipful",
+    "pre_rev": "||7",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 28,
+    "pre_name": "Sublime",
+    "pre_rev": "||8",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 29,
+    "pre_name": "Pure",
+    "pre_rev": "||9",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 30,
+    "pre_name": "Absolute",
+    "pre_rev": "||10",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 31,
+    "pre_name": "Fixed",
+    "pre_rev": "|||1",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 32,
+    "pre_name": "Confirmatory",
+    "pre_rev": "|||2",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 33,
+    "pre_name": "Celebrated",
+    "pre_rev": "|||3",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 34,
+    "pre_name": "Dignified",
+    "pre_rev": "|||4",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 35,
+    "pre_name": "Merciful",
+    "pre_rev": "|||5",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 36,
+    "pre_name": "Predictive",
+    "pre_rev": "|||6",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 37,
+    "pre_name": "Foreseeable",
+    "pre_rev": "|||7",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 38,
+    "pre_name": "Noble",
+    "pre_rev": "|||8",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 39,
+    "pre_name": "Reverent",
+    "pre_rev": "|||9",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 40,
+    "pre_name": "Paradoxic",
+    "pre_rev": "|||10",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 41,
+    "pre_name": "Agile",
+    "pre_rev": "||||1",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 42,
+    "pre_name": "Reflective",
+    "pre_rev": "||||2",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 43,
+    "pre_name": "Instant",
+    "pre_rev": "||||3",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 44,
+    "pre_name": "Flexible",
+    "pre_rev": "||||4",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 45,
+    "pre_name": "Dashy",
+    "pre_rev": "||||5",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 46,
+    "pre_name": "Rush",
+    "pre_rev": "||||6",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 47,
+    "pre_name": "Fierce",
+    "pre_rev": "||||7",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 48,
+    "pre_name": "Flashy",
+    "pre_rev": "||||8",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 49,
+    "pre_name": "Unlimited",
+    "pre_rev": "||||9",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 50,
+    "pre_name": "Gliding",
+    "pre_rev": "||||10",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 51,
+    "pre_name": "Heavy blows",
+    "pre_rev": "||||||||4",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 52,
+    "pre_name": "Powerful",
+    "pre_rev": "|||||||2|2",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 53,
+    "pre_name": "Explosive",
+    "pre_rev": "||||||||6",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 54,
+    "pre_name": "Fierc",
+    "pre_rev": "|||||||3|3",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 55,
+    "pre_name": "Exterminable",
+    "pre_rev": "||||||||8",
+    "pre_grd": 2
+  },
+  {
+    "pre_azon": 56,
+    "pre_name": "Feathery",
+    "pre_rev": "|2|||1",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 57,
+    "pre_name": "Mans",
+    "pre_rev": "1|2",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 58,
+    "pre_name": "Extreme",
+    "pre_rev": "||||||||12",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 59,
+    "pre_name": "Destructive",
+    "pre_rev": "||||||||14",
+    "pre_grd": 2
+  },
+  {
+    "pre_azon": 60,
+    "pre_name": "Fundamental",
+    "pre_rev": "||||||||||4",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 61,
+    "pre_name": "Powerfull",
+    "pre_rev": "|||||||||2|2",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 62,
+    "pre_name": "Mighty",
+    "pre_rev": "||||||||||6",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 63,
+    "pre_name": "Considerable",
+    "pre_rev": "|||||||||3|3",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 64,
+    "pre_name": "Cruel",
+    "pre_rev": "||||||||||8",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 65,
+    "pre_name": "Wisdoms",
+    "pre_rev": "|2|1",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 66,
+    "pre_name": "High class",
+    "pre_rev": "||||||||||12",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 67,
+    "pre_name": "Absoluteness",
+    "pre_rev": "||||||||||14",
+    "pre_grd": 2
+  },
+  {
+    "pre_azon": 68,
+    "pre_name": "Wandering Knights",
+    "pre_rev": "1|1|||1||||1",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 69,
+    "pre_name": "Skillful Knights",
+    "pre_rev": "2|2|||1|||1|2",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 70,
+    "pre_name": "Veteran  Knights",
+    "pre_rev": "3|2|||2|50||2|3",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 71,
+    "pre_name": "Expert Knights",
+    "pre_rev": "4|3|||3|75|25|2|5",
+    "pre_grd": 2
+  },
+  {
+    "pre_azon": 72,
+    "pre_name": "Wandering Archers",
+    "pre_rev": "1|1|||1||||1",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 73,
+    "pre_name": "Skillful Archers",
+    "pre_rev": "2|1|||2|||1|2",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 74,
+    "pre_name": "Veteran  Archers",
+    "pre_rev": "2|2|||3|50||2|3",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 75,
+    "pre_name": "Expert Archers",
+    "pre_rev": "3|3|||4|75|25|2|5",
+    "pre_grd": 2
+  },
+  {
+    "pre_azon": 76,
+    "pre_name": "Beginning Scholars",
+    "pre_rev": "||1|1|||||||1",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 77,
+    "pre_name": "Skillful Scholars",
+    "pre_rev": "||1|2|1|||||1|2",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 78,
+    "pre_name": "Veteran Scholars",
+    "pre_rev": "||3|2|2|50||||2|3",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 79,
+    "pre_name": "Expert Scholars",
+    "pre_rev": "||4|3|3|50|50|||2|5",
+    "pre_grd": 2
+  },
+  {
+    "pre_azon": 80,
+    "pre_name": "Distinct",
+    "pre_rev": "|2|3|5|2|90|110|||||||2",
+    "pre_grd": 3
+  },
+  {
+    "pre_azon": 81,
+    "pre_name": "Steely",
+    "pre_rev": "2|5||2|3|150||||||||5",
+    "pre_grd": ""
+  },
+  {
+    "pre_azon": 82,
+    "pre_name": "Breakthroughs",
+    "pre_rev": "5|2||2|3|100|100|||||1",
+    "pre_grd": 3
+  },
+  {
+    "pre_azon": 83,
+    "pre_name": "Despotic",
+    "pre_rev": "2|1||||||||||1",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 84,
+    "pre_name": "Revenges",
+    "pre_rev": "|||1|2|||||||1",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 85,
+    "pre_name": "Prideful",
+    "pre_rev": "|2|||1|60||||||||1",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 86,
+    "pre_name": "Ruinous",
+    "pre_rev": "|1|2||||30|||||||2",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 87,
+    "pre_name": "Glorious",
+    "pre_rev": "|||2|1||30|||||||2",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 88,
+    "pre_name": "Decisional",
+    "pre_rev": "3|2||2|5|120|80|||||||2",
+    "pre_grd": 3
+  },
+  {
+    "pre_azon": 89,
+    "pre_name": "Magical Powers",
+    "pre_rev": "|2|5|3|2|50|150|||||||2",
+    "pre_grd": 3
+  },
+  {
+    "pre_azon": 90,
+    "pre_name": "Legendary",
+    "pre_rev": "5|5|5|5|5|75|75|||||||5",
+    "pre_grd": 3
+  },
+  {
+    "pre_azon": 91,
+    "pre_name": "Rash",
+    "pre_rev": "|||||360||||||||3",
+    "pre_grd": 1
+  },
+  {
+    "pre_azon": 92,
+    "pre_name": "The King, GuhBalHans",
+    "pre_rev": "6|6|6|6|6|100|80|||||||5",
+    "pre_grd": 3
+  },
+  {
+    "pre_azon": 93,
+    "pre_name": "Excessiveness",
+    "pre_rev": "3||||3",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 94,
+    "pre_name": "Vigor",
+    "pre_rev": "3|3",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 95,
+    "pre_name": "Explosion",
+    "pre_rev": "3||3",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 96,
+    "pre_name": "Courage",
+    "pre_rev": "3|||3",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 97,
+    "pre_name": "Wisdom",
+    "pre_rev": "||3|3",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 98,
+    "pre_name": "Knowledge",
+    "pre_rev": "|3|3",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 99,
+    "pre_name": "Quickness",
+    "pre_rev": "||3||3",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 100,
+    "pre_name": "Meditation",
+    "pre_rev": "|||3|3",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 101,
+    "pre_name": "Maturity",
+    "pre_rev": "|3|||3",
+    "pre_grd": 0
+  },
+  {
+    "pre_azon": 102,
+    "pre_name": "Sage",
+    "pre_rev": "|3||3",
+    "pre_grd": 0
+  }
+]

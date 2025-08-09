@@ -1,0 +1,98 @@
+[
+  {
+    "eb_lvl": "01",
+    "eb_rev": 1,
+    "eb_srev": 1,
+    "eb_price": 1.5
+  },
+  {
+    "eb_lvl": "02",
+    "eb_rev": 2,
+    "eb_srev": 3,
+    "eb_price": 3
+  },
+  {
+    "eb_lvl": "03",
+    "eb_rev": 2,
+    "eb_srev": 5,
+    "eb_price": 4.5
+  },
+  {
+    "eb_lvl": "04",
+    "eb_rev": 4,
+    "eb_srev": 9,
+    "eb_price": 6
+  },
+  {
+    "eb_lvl": "05",
+    "eb_rev": 5,
+    "eb_srev": 14,
+    "eb_price": 7.5
+  },
+  {
+    "eb_lvl": "06",
+    "eb_rev": 7,
+    "eb_srev": 21,
+    "eb_price": 9
+  },
+  {
+    "eb_lvl": "07",
+    "eb_rev": 10,
+    "eb_srev": 31,
+    "eb_price": 10.5
+  },
+  {
+    "eb_lvl": "08",
+    "eb_rev": 13,
+    "eb_srev": 44,
+    "eb_price": 12
+  },
+  {
+    "eb_lvl": "09",
+    "eb_rev": 21,
+    "eb_srev": 65,
+    "eb_price": 13.5
+  },
+  {
+    "eb_lvl": 10,
+    "eb_rev": 29,
+    "eb_srev": 94,
+    "eb_price": 15
+  },
+  {
+    "eb_lvl": 11,
+    "eb_rev": 45,
+    "eb_srev": 139,
+    "eb_price": 16.5
+  },
+  {
+    "eb_lvl": 12,
+    "eb_rev": 92,
+    "eb_srev": 231,
+    "eb_price": 18
+  },
+  {
+    "eb_lvl": 13,
+    "eb_rev": 188,
+    "eb_srev": 419,
+    "eb_price": 19.5
+  },
+  {
+    "eb_lvl": 14,
+    "eb_rev": 192,
+    "eb_srev": 611,
+    "eb_price": 21
+  },
+  {
+    "eb_lvl": 15,
+    "eb_rev": 196,
+    "eb_srev": 807,
+    "eb_price": 22.5
+  },
+  {
+    "eb_lvl": 16,
+    "eb_rev": 200,
+    "eb_srev": 1.007,
+    "eb_price": 24
+  }
+]

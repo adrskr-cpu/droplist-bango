@@ -1,0 +1,398 @@
+[
+  {
+    "lpl_id": "L01",
+    "lpl_exp": 5
+  },
+  {
+    "lpl_id": "L02",
+    "lpl_exp": 24
+  },
+  {
+    "lpl_id": "L03",
+    "lpl_exp": 60
+  },
+  {
+    "lpl_id": "L04",
+    "lpl_exp": 80
+  },
+  {
+    "lpl_id": "L05",
+    "lpl_exp": 164
+  },
+  {
+    "lpl_id": "L06",
+    "lpl_exp": 271
+  },
+  {
+    "lpl_id": "L07",
+    "lpl_exp": 407
+  },
+  {
+    "lpl_id": "L08",
+    "lpl_exp": 579
+  },
+  {
+    "lpl_id": "L09",
+    "lpl_exp": 794
+  },
+  {
+    "lpl_id": "L10",
+    "lpl_exp": 1125
+  },
+  {
+    "lpl_id": "L11",
+    "lpl_exp": 1543
+  },
+  {
+    "lpl_id": "L12",
+    "lpl_exp": 2068
+  },
+  {
+    "lpl_id": "L13",
+    "lpl_exp": 2722
+  },
+  {
+    "lpl_id": "L14",
+    "lpl_exp": 3534
+  },
+  {
+    "lpl_id": "L15",
+    "lpl_exp": 4563
+  },
+  {
+    "lpl_id": "L16",
+    "lpl_exp": 5830
+  },
+  {
+    "lpl_id": "L17",
+    "lpl_exp": 7385
+  },
+  {
+    "lpl_id": "L18",
+    "lpl_exp": 9286
+  },
+  {
+    "lpl_id": "L19",
+    "lpl_exp": 11607
+  },
+  {
+    "lpl_id": "L20",
+    "lpl_exp": 17493
+  },
+  {
+    "lpl_id": "L21",
+    "lpl_exp": 21845
+  },
+  {
+    "lpl_id": "L22",
+    "lpl_exp": 27147
+  },
+  {
+    "lpl_id": "L23",
+    "lpl_exp": 33593
+  },
+  {
+    "lpl_id": "L24",
+    "lpl_exp": 41416
+  },
+  {
+    "lpl_id": "L25",
+    "lpl_exp": 51341
+  },
+  {
+    "lpl_id": "L26",
+    "lpl_exp": 63394
+  },
+  {
+    "lpl_id": "L27",
+    "lpl_exp": 78005
+  },
+  {
+    "lpl_id": "L28",
+    "lpl_exp": 95696
+  },
+  {
+    "lpl_id": "L29",
+    "lpl_exp": 117090
+  },
+  {
+    "lpl_id": "L30",
+    "lpl_exp": 166758
+  },
+  {
+    "lpl_id": "L31",
+    "lpl_exp": 203151
+  },
+  {
+    "lpl_id": "L32",
+    "lpl_exp": 247043
+  },
+  {
+    "lpl_id": "L33",
+    "lpl_exp": 299942
+  },
+  {
+    "lpl_id": "L34",
+    "lpl_exp": 363659
+  },
+  {
+    "lpl_id": "L35",
+    "lpl_exp": 440404
+  },
+  {
+    "lpl_id": "L36",
+    "lpl_exp": 532757
+  },
+  {
+    "lpl_id": "L37",
+    "lpl_exp": 643849
+  },
+  {
+    "lpl_id": "L38",
+    "lpl_exp": 777437
+  },
+  {
+    "lpl_id": "L39",
+    "lpl_exp": 938032
+  },
+  {
+    "lpl_id": "L40",
+    "lpl_exp": 1211834
+  },
+  {
+    "lpl_id": "L41",
+    "lpl_exp": 1460324
+  },
+  {
+    "lpl_id": "L42",
+    "lpl_exp": 1758856
+  },
+  {
+    "lpl_id": "L43",
+    "lpl_exp": 2117449
+  },
+  {
+    "lpl_id": "L44",
+    "lpl_exp": 2548126
+  },
+  {
+    "lpl_id": "L45",
+    "lpl_exp": 3065315
+  },
+  {
+    "lpl_id": "L46",
+    "lpl_exp": 3686331
+  },
+  {
+    "lpl_id": "L47",
+    "lpl_exp": 4431950
+  },
+  {
+    "lpl_id": "L48",
+    "lpl_exp": 5327106
+  },
+  {
+    "lpl_id": "L49",
+    "lpl_exp": 6401717
+  },
+  {
+    "lpl_id": "L50",
+    "lpl_exp": 10255633
+  },
+  {
+    "lpl_id": "L51",
+    "lpl_exp": 12320243
+  },
+  {
+    "lpl_id": "L52",
+    "lpl_exp": 14798389
+  },
+  {
+    "lpl_id": "L53",
+    "lpl_exp": 17772795
+  },
+  {
+    "lpl_id": "L54",
+    "lpl_exp": 21342730
+  },
+  {
+    "lpl_id": "L55",
+    "lpl_exp": 25627317
+  },
+  {
+    "lpl_id": "L56",
+    "lpl_exp": 30769501
+  },
+  {
+    "lpl_id": "L57",
+    "lpl_exp": 36940820
+  },
+  {
+    "lpl_id": "L58",
+    "lpl_exp": 44347118
+  },
+  {
+    "lpl_id": "L59",
+    "lpl_exp": 53235407
+  },
+  {
+    "lpl_id": "L60",
+    "lpl_exp": 63902104
+  },
+  {
+    "lpl_id": "L61",
+    "lpl_exp": 76702906
+  },
+  {
+    "lpl_id": "L62",
+    "lpl_exp": 92064653
+  },
+  {
+    "lpl_id": "L63",
+    "lpl_exp": 110499551
+  },
+  {
+    "lpl_id": "L64",
+    "lpl_exp": 132622249
+  },
+  {
+    "lpl_id": "L65",
+    "lpl_exp": 159170373
+  },
+  {
+    "lpl_id": "L66",
+    "lpl_exp": 191028978
+  },
+  {
+    "lpl_id": "L67",
+    "lpl_exp": 229260177
+  },
+  {
+    "lpl_id": "L68",
+    "lpl_exp": 275138508
+  },
+  {
+    "lpl_id": "L69",
+    "lpl_exp": 330193415
+  },
+  {
+    "lpl_id": "L70",
+    "lpl_exp": 396260232
+  },
+  {
+    "lpl_id": "L71",
+    "lpl_exp": 1188853398
+  },
+  {
+    "lpl_id": "L72",
+    "lpl_exp": 1426699190
+  },
+  {
+    "lpl_id": "L73",
+    "lpl_exp": 1712116603
+  },
+  {
+    "lpl_id": "L74",
+    "lpl_exp": 2054620005
+  },
+  {
+    "lpl_id": "L75",
+    "lpl_exp": 2465626643
+  },
+  {
+    "lpl_id": "L76",
+    "lpl_exp": 2958837208
+  },
+  {
+    "lpl_id": "L77",
+    "lpl_exp": 3550692535
+  },
+  {
+    "lpl_id": "L78",
+    "lpl_exp": 4260921625
+  },
+  {
+    "lpl_id": "L79",
+    "lpl_exp": 5113199283
+  },
+  {
+    "lpl_id": "L80",
+    "lpl_exp": 12271870776
+  },
+  {
+    "lpl_id": "L81",
+    "lpl_exp": 14726443120
+  },
+  {
+    "lpl_id": "L82",
+    "lpl_exp": 17671935710
+  },
+  {
+    "lpl_id": "L83",
+    "lpl_exp": 21206532706
+  },
+  {
+    "lpl_id": "L84",
+    "lpl_exp": 31810068850
+  },
+  {
+    "lpl_id": "L85",
+    "lpl_exp": 38172360013
+  },
+  {
+    "lpl_id": "L86",
+    "lpl_exp": 45807117133
+  },
+  {
+    "lpl_id": "L87",
+    "lpl_exp": 54968833525
+  },
+  {
+    "lpl_id": "L88",
+    "lpl_exp": 65962901170
+  },
+  {
+    "lpl_id": "L89",
+    "lpl_exp": 94986948540
+  },
+  {
+    "lpl_id": "L90",
+    "lpl_exp": 113984718984
+  },
+  {
+    "lpl_id": "L91",
+    "lpl_exp": 136782053544
+  },
+  {
+    "lpl_id": "L92",
+    "lpl_exp": 164138865195
+  },
+  {
+    "lpl_id": "L93",
+    "lpl_exp": 196967049519
+  },
+  {
+    "lpl_id": "L94",
+    "lpl_exp": 315147841592
+  },
+  {
+    "lpl_id": "L95",
+    "lpl_exp": 378177986472
+  },
+  {
+    "lpl_id": "L96",
+    "lpl_exp": 453814174732
+  },
+  {
+    "lpl_id": "L97",
+    "lpl_exp": 544577615260
+  },
+  {
+    "lpl_id": "L98",
+    "lpl_exp": 653493758732
+  },
+  {
+    "lpl_id": "L99",
+    "lpl_exp": 980241432400
+  }
+]

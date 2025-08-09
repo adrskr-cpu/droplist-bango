@@ -1,0 +1,198 @@
+[
+  {
+    "po_azon": 1,
+    "po_class": 3,
+    "po_megn": "Scholar",
+    "po_lvl": 1,
+    "po_skills": "7,1"
+  },
+  {
+    "po_azon": 2,
+    "po_class": 3,
+    "po_megn": "Literary Person",
+    "po_lvl": 30,
+    "po_skills": "7,1,2"
+  },
+  {
+    "po_azon": 3,
+    "po_class": 3,
+    "po_megn": "Hermit",
+    "po_lvl": 50,
+    "po_skills": "7,1,2,3"
+  },
+  {
+    "po_azon": 4,
+    "po_class": 3,
+    "po_megn": "Chairperson of Joong-Bang",
+    "po_lvl": 50,
+    "po_skills": "7,1,2,4"
+  },
+  {
+    "po_azon": 5,
+    "po_class": 3,
+    "po_megn": "Ascetic",
+    "po_lvl": 70,
+    "po_skills": "7,1,2,3,5"
+  },
+  {
+    "po_azon": 6,
+    "po_class": 3,
+    "po_megn": "Military Adviser",
+    "po_lvl": 70,
+    "po_skills": "7,1,2,4,6"
+  },
+  {
+    "po_azon": 7,
+    "po_class": 3,
+    "po_megn": "Free Magician",
+    "po_lvl": 0,
+    "po_skills": ""
+  },
+  {
+    "po_azon": 8,
+    "po_class": 2,
+    "po_megn": "Wondering Knight",
+    "po_lvl": 1,
+    "po_skills": "14,8"
+  },
+  {
+    "po_azon": 9,
+    "po_class": 2,
+    "po_megn": "Apprentice Knight",
+    "po_lvl": 30,
+    "po_skills": "14,8,9"
+  },
+  {
+    "po_azon": 10,
+    "po_class": 2,
+    "po_megn": "Vagabond Sword-man",
+    "po_lvl": 50,
+    "po_skills": "14,8,9,10"
+  },
+  {
+    "po_azon": 11,
+    "po_class": 2,
+    "po_megn": "Commander",
+    "po_lvl": 50,
+    "po_skills": "14,8,9,11"
+  },
+  {
+    "po_azon": 12,
+    "po_class": 2,
+    "po_megn": "God of Sword",
+    "po_lvl": 70,
+    "po_skills": "14,8,9,10,12"
+  },
+  {
+    "po_azon": 13,
+    "po_class": 2,
+    "po_megn": "General",
+    "po_lvl": 70,
+    "po_skills": "14,8,9,11,13"
+  },
+  {
+    "po_azon": 14,
+    "po_class": 2,
+    "po_megn": "Free Knight",
+    "po_lvl": 0,
+    "po_skills": ""
+  },
+  {
+    "po_azon": 15,
+    "po_class": 1,
+    "po_megn": "Wondering Archer",
+    "po_lvl": 1,
+    "po_skills": "21,15"
+  },
+  {
+    "po_azon": 16,
+    "po_class": 1,
+    "po_megn": "Apprentice Archer",
+    "po_lvl": 30,
+    "po_skills": "21,15,16"
+  },
+  {
+    "po_azon": 17,
+    "po_class": 1,
+    "po_megn": "Expert Archer",
+    "po_lvl": 50,
+    "po_skills": "21,15,16,17"
+  },
+  {
+    "po_azon": 18,
+    "po_class": 1,
+    "po_megn": "Imperial Commander",
+    "po_lvl": 50,
+    "po_skills": "21,15,16,18"
+  },
+  {
+    "po_azon": 19,
+    "po_class": 1,
+    "po_megn": "God of Bow",
+    "po_lvl": 70,
+    "po_skills": "21,15,16,17,19"
+  },
+  {
+    "po_azon": 20,
+    "po_class": 1,
+    "po_megn": "Imperial General",
+    "po_lvl": 70,
+    "po_skills": "21,15,16,18,20"
+  },
+  {
+    "po_azon": 21,
+    "po_class": 1,
+    "po_megn": "Free Archer",
+    "po_lvl": 0,
+    "po_skills": ""
+  },
+  {
+    "po_azon": 22,
+    "po_class": 4,
+    "po_megn": "Wandering Thief",
+    "po_lvl": 1,
+    "po_skills": "28,22"
+  },
+  {
+    "po_azon": 23,
+    "po_class": 4,
+    "po_megn": "Thief Guild Member",
+    "po_lvl": 30,
+    "po_skills": "28,22,23"
+  },
+  {
+    "po_azon": 24,
+    "po_class": 4,
+    "po_megn": "Hitman",
+    "po_lvl": 50,
+    "po_skills": "28,22,23,24"
+  },
+  {
+    "po_azon": 25,
+    "po_class": 4,
+    "po_megn": "I Swordsman",
+    "po_lvl": 50,
+    "po_skills": "28,22,23,25"
+  },
+  {
+    "po_azon": 26,
+    "po_class": 4,
+    "po_megn": "Dark Shadow",
+    "po_lvl": 70,
+    "po_skills": "28,22,23,24,26"
+  },
+  {
+    "po_azon": 27,
+    "po_class": 4,
+    "po_megn": "Unearthly Ghost",
+    "po_lvl": 70,
+    "po_skills": "28,22,23,25,27"
+  },
+  {
+    "po_azon": 28,
+    "po_class": 4,
+    "po_megn": "Free Thief",
+    "po_lvl": 0,
+    "po_skills": ""
+  }
+]

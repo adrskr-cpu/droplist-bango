@@ -1,0 +1,322 @@
+[
+  {
+    "leg_id": "G01",
+    "leg_stat": "1 / 1 / 1"
+  },
+  {
+    "leg_id": "G02",
+    "leg_stat": "2 / 1 / 1"
+  },
+  {
+    "leg_id": "G03",
+    "leg_stat": "2 / 1 / 1"
+  },
+  {
+    "leg_id": "G04",
+    "leg_stat": "3 / 2 / 1"
+  },
+  {
+    "leg_id": "G05",
+    "leg_stat": "3 / 2 / 1"
+  },
+  {
+    "leg_id": "G06",
+    "leg_stat": "4 / 2 / 2"
+  },
+  {
+    "leg_id": "G07",
+    "leg_stat": "4 / 2 / 2"
+  },
+  {
+    "leg_id": "G08",
+    "leg_stat": "5 / 3 / 2"
+  },
+  {
+    "leg_id": "G09",
+    "leg_stat": "5 / 3 / 2"
+  },
+  {
+    "leg_id": "G10",
+    "leg_stat": "6 / 3 / 2"
+  },
+  {
+    "leg_id": "G11",
+    "leg_stat": "6 / 3 / 2"
+  },
+  {
+    "leg_id": "G12",
+    "leg_stat": "7 / 4 / 3"
+  },
+  {
+    "leg_id": "G13",
+    "leg_stat": "7 / 4 / 3"
+  },
+  {
+    "leg_id": "G14",
+    "leg_stat": "8 / 4 / 3"
+  },
+  {
+    "leg_id": "G15",
+    "leg_stat": "8 / 4 / 3"
+  },
+  {
+    "leg_id": "G16",
+    "leg_stat": "9 / 5 / 3"
+  },
+  {
+    "leg_id": "G17",
+    "leg_stat": "9 / 5 / 3"
+  },
+  {
+    "leg_id": "G18",
+    "leg_stat": "10 / 5 / 4"
+  },
+  {
+    "leg_id": "G19",
+    "leg_stat": "10 / 5 / 4"
+  },
+  {
+    "leg_id": "G20",
+    "leg_stat": "11 / 6 / 4"
+  },
+  {
+    "leg_id": "G21",
+    "leg_stat": "11 / 6 / 4"
+  },
+  {
+    "leg_id": "G22",
+    "leg_stat": "12 / 6 / 4"
+  },
+  {
+    "leg_id": "G23",
+    "leg_stat": "12 / 6 / 4"
+  },
+  {
+    "leg_id": "G24",
+    "leg_stat": "13 / 7 / 5"
+  },
+  {
+    "leg_id": "G25",
+    "leg_stat": "13 / 7 / 5"
+  },
+  {
+    "leg_id": "G26",
+    "leg_stat": "14 / 7 / 5"
+  },
+  {
+    "leg_id": "G27",
+    "leg_stat": "14 / 7 / 5"
+  },
+  {
+    "leg_id": "G28",
+    "leg_stat": "15 / 8 / 5"
+  },
+  {
+    "leg_id": "G29",
+    "leg_stat": "15 / 8 / 5"
+  },
+  {
+    "leg_id": "G30",
+    "leg_stat": "16 / 8 / 6"
+  },
+  {
+    "leg_id": "G31",
+    "leg_stat": "16 / 8 / 6"
+  },
+  {
+    "leg_id": "G32",
+    "leg_stat": "17 / 9 / 6"
+  },
+  {
+    "leg_id": "G33",
+    "leg_stat": "17 / 9 / 6"
+  },
+  {
+    "leg_id": "G34",
+    "leg_stat": "18 / 9 / 6"
+  },
+  {
+    "leg_id": "G35",
+    "leg_stat": "18 / 9 / 6"
+  },
+  {
+    "leg_id": "G36",
+    "leg_stat": "19 / 10 / 7"
+  },
+  {
+    "leg_id": "G37",
+    "leg_stat": "19 / 10 / 7"
+  },
+  {
+    "leg_id": "G38",
+    "leg_stat": "20 / 10 / 7"
+  },
+  {
+    "leg_id": "G39",
+    "leg_stat": "20 / 10 / 7"
+  },
+  {
+    "leg_id": "G40",
+    "leg_stat": "22 / 12 / 8"
+  },
+  {
+    "leg_id": "G41",
+    "leg_stat": "22 / 12 / 8"
+  },
+  {
+    "leg_id": "G42",
+    "leg_stat": "23 / 12 / 8"
+  },
+  {
+    "leg_id": "G43",
+    "leg_stat": "23 / 12 / 8"
+  },
+  {
+    "leg_id": "G44",
+    "leg_stat": "23 / 13 / 8"
+  },
+  {
+    "leg_id": "G45",
+    "leg_stat": "23 / 13 / 8"
+  },
+  {
+    "leg_id": "G46",
+    "leg_stat": "23 / 13 / 9"
+  },
+  {
+    "leg_id": "G47",
+    "leg_stat": "23 / 13 / 9"
+  },
+  {
+    "leg_id": "G48",
+    "leg_stat": "24 / 14 / 9"
+  },
+  {
+    "leg_id": "G49",
+    "leg_stat": "24 / 14 / 9"
+  },
+  {
+    "leg_id": "G50",
+    "leg_stat": "25 / 14 / 9"
+  },
+  {
+    "leg_id": "G51",
+    "leg_stat": "25 / 14 / 9"
+  },
+  {
+    "leg_id": "G52",
+    "leg_stat": "27 / 17 / 11"
+  },
+  {
+    "leg_id": "G53",
+    "leg_stat": "27 / 17 / 11"
+  },
+  {
+    "leg_id": "G54",
+    "leg_stat": "27 / 17 / 12"
+  },
+  {
+    "leg_id": "G55",
+    "leg_stat": "27 / 17 / 12"
+  },
+  {
+    "leg_id": "G56",
+    "leg_stat": "27 / 18 / 13"
+  },
+  {
+    "leg_id": "G57",
+    "leg_stat": "27 / 18 / 13"
+  },
+  {
+    "leg_id": "G58",
+    "leg_stat": "28 / 18 / 13"
+  },
+  {
+    "leg_id": "G59",
+    "leg_stat": "28 / 18 / 13"
+  },
+  {
+    "leg_id": "G60",
+    "leg_stat": "28 / 19 / 13"
+  },
+  {
+    "leg_id": "G61",
+    "leg_stat": "28 / 19 / 13"
+  },
+  {
+    "leg_id": "G62",
+    "leg_stat": "31 / 22 / 17"
+  },
+  {
+    "leg_id": "G63",
+    "leg_stat": "31 / 22 / 17"
+  },
+  {
+    "leg_id": "G64",
+    "leg_stat": "32 / 22 / 18"
+  },
+  {
+    "leg_id": "G65",
+    "leg_stat": "32 / 22 / 18"
+  },
+  {
+    "leg_id": "G66",
+    "leg_stat": "33 / 23 / 19"
+  },
+  {
+    "leg_id": "G67",
+    "leg_stat": "33 / 23 / 19"
+  },
+  {
+    "leg_id": "G68",
+    "leg_stat": "34 / 24 / 20"
+  },
+  {
+    "leg_id": "G69",
+    "leg_stat": "34 / 24 / 20"
+  },
+  {
+    "leg_id": "G70",
+    "leg_stat": "35 / 25 / 21"
+  },
+  {
+    "leg_id": "G71",
+    "leg_stat": "35 / 25 / 21"
+  },
+  {
+    "leg_id": "G72",
+    "leg_stat": "37 / 26 / 22"
+  },
+  {
+    "leg_id": "G73",
+    "leg_stat": "37 / 26 / 22"
+  },
+  {
+    "leg_id": "G74",
+    "leg_stat": "39 / 27 / 23"
+  },
+  {
+    "leg_id": "G75",
+    "leg_stat": "39 / 27 / 23"
+  },
+  {
+    "leg_id": "G76",
+    "leg_stat": "41 / 28 / 24"
+  },
+  {
+    "leg_id": "G77",
+    "leg_stat": "41 / 28 / 24"
+  },
+  {
+    "leg_id": "G78",
+    "leg_stat": "43 / 29 / 25"
+  },
+  {
+    "leg_id": "G79",
+    "leg_stat": "43 / 29 / 25"
+  },
+  {
+    "leg_id": "G80",
+    "leg_stat": "45 / 30 / 26"
+  }
+]
