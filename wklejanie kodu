@@ -1,6 +1,48 @@
-[CHUNK X/Y]   ← X = numer porcji, Y = liczba wszystkich porcji
-Plik: <nazwa_pliku>  
-Linie: <od–do>  
+[CHUNK 1/2]   ← X = numer porcji, Y = liczba wszystkich porcji
+Plik: <MainWindow.xaml>  
+Linie: <1–120>  
+ ---CODE---
+(tutaj wklej kod bez skracania)
+---END---
+
+[CHUNK 2/2]   ← X = numer porcji, Y = liczba wszystkich porcji
+Plik: <MainWindow.xaml>  
+Linie: <121–>  
+ ---CODE---
+(tutaj wklej kod bez skracania)
+---END---
+
+[CHUNK 1/5]   ← X = numer porcji, Y = liczba wszystkich porcji
+Plik: <MainWindow.xaml.cs>  
+Linie: <1–120>  
+ ---CODE---
+(tutaj wklej kod bez skracania)
+---END---
+
+[CHUNK 2/5]   ← X = numer porcji, Y = liczba wszystkich porcji
+Plik: <MainWindow.xaml.cs>  
+Linie: <121–220>  
+ ---CODE---
+(tutaj wklej kod bez skracania)
+---END---
+
+[CHUNK 3/5]   ← X = numer porcji, Y = liczba wszystkich porcji
+Plik: <MainWindow.xaml.cs>  
+Linie: <221–320>  
+ ---CODE---
+(tutaj wklej kod bez skracania)
+---END---
+
+[CHUNK 4/5]   ← X = numer porcji, Y = liczba wszystkich porcji
+Plik: <MainWindow.xaml.cs>  
+Linie: <321–420>  
+ ---CODE---
+(tutaj wklej kod bez skracania)
+---END---
+
+[CHUNK 5/5]   ← X = numer porcji, Y = liczba wszystkich porcji
+Plik: <MainWindow.xaml.cs>  
+Linie: <421–>  
  ---CODE---
 (tutaj wklej kod bez skracania)
 ---END---
