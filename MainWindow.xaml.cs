@@ -78,20 +78,21 @@ namespace VUYAexe1
                     Width = new DataGridLength(1, DataGridLengthUnitType.Star)
                 };
 
-                // Dodaj obsługę kliknięcia nagłówka kolumny
-                column.HeaderStyle = new Style(typeof(DataGridColumnHeader));
-                column.HeaderStyle.Setters.Add(new EventSetter
-                {
-                    Event = MouseLeftButtonUpEvent,
-                    Handler = new MouseButtonEventHandler((s, e) =>
+                // Zachowaj bazowy ciemny styl nagłówków i tylko dodaj reakcję na klik
+                var baseHeaderStyle = GridItems.ColumnHeaderStyle;
+                var headerStyle = new Style(typeof(DataGridColumnHeader), baseHeaderStyle);
+                headerStyle.Setters.Add(new EventSetter(
+                    UIElement.MouseLeftButtonUpEvent,
+                    new MouseButtonEventHandler((s, e) =>
                     {
                         if (s is DataGridColumnHeader header && header.Content is string name)
                         {
                             _selectedColumnName = name;
-                            TbRenameColumnName.Text = name; // opcjonalnie: automatyczne wstawienie nazwy
+                            TbRenameColumnName.Text = name;
                         }
                     })
-                });
+                ));
+                column.HeaderStyle = headerStyle;
 
                 GridItems.Columns.Add(column);
             }
@@ -232,7 +233,6 @@ namespace VUYAexe1
 
                 BindTable();
                 RebuildGridColumns();
-
                 TbNewColumnName.Clear();
             }
             catch (Exception ex)
@@ -243,64 +243,48 @@ namespace VUYAexe1
 
         private void BtnRenameColumn_Click(object sender, RoutedEventArgs e)
         {
-            // Bezpieczne pobranie kolumny
             var oldName = _selectedColumnName;
             if (string.IsNullOrWhiteSpace(oldName))
             {
-                MessageBox.Show("Zaznacz kolumnę do zmiany nazwy (kliknij jej nagłówek).",
-                                "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Zaznacz kolumnę do zmiany nazwy (kliknij jej nagłówek).", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
-            // Bezpieczne pobranie nowej nazwy (zgodnie z XAML: TbRenameColumnName)
             var newName = TbRenameColumnName?.Text?.Trim();
             if (string.IsNullOrWhiteSpace(newName))
             {
-                MessageBox.Show("Podaj nową nazwę kolumny.",
-                                "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Podaj nową nazwę kolumny.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
-            // Nazwa identyczna
             if (string.Equals(oldName, newName, StringComparison.Ordinal))
                 return;
 
-            // Sprawdzenie duplikatu
-            if (_table?.Columns.Contains(newName) == true)
+            if (_table.Columns.Contains(newName))
             {
-                MessageBox.Show("Kolumna o takiej nazwie już istnieje.",
-                                "Kolumna", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Kolumna o takiej nazwie już istnieje.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             try
             {
-                // Null-safe zmiana nazwy
-                if (_table is not null)
+                if (_table.Columns.Contains(oldName))
                 {
-                    var columns = _table.Columns;
-                    if (!string.IsNullOrEmpty(oldName) && columns.Contains(oldName))
-                    {
-                        var col = columns[oldName];
-                        if (col != null)
-                            col.ColumnName = newName!; // w tym miejscu mamy gwarancję, że newName nie jest null
-                    }
+                    _table.Columns[oldName].ColumnName = newName!;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Nie udało się zmienić nazwy kolumny:\n{ex.Message}",
-                                "Kolumna", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Nie udało się zmienić nazwy kolumny:\n{ex.Message}", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             TbRenameColumnName?.Clear();
+            _selectedColumnName = newName;
             BindTable();
             RebuildGridColumns();
 
-            // Ustaw fokus na nową kolumnę (jeśli istnieje)
-            var newCol = GridItems?.Columns
-                                  .FirstOrDefault(c => string.Equals(c.Header?.ToString(), newName, StringComparison.Ordinal));
+            var newCol = GridItems?.Columns.FirstOrDefault(c => string.Equals(c.Header?.ToString(), newName, StringComparison.Ordinal));
             if (newCol != null)
                 GridItems!.CurrentColumn = newCol;
         }
@@ -310,27 +294,25 @@ namespace VUYAexe1
             var name = _selectedColumnName;
             if (string.IsNullOrWhiteSpace(name))
             {
-                MessageBox.Show("Zaznacz kolumnę do usunięcia (kliknij jej nagłówek).",
-                                "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Zaznacz kolumnę do usunięcia (kliknij jej nagłówek).", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
-
-            if (_table?.Columns.Contains(name) != true)
+            if (!_table.Columns.Contains(name))
                 return;
 
-            _table!.Columns.Remove(name);
+            _table.Columns.Remove(name);
             ClearFilterIfInvalid();
             ClearSortIfInvalid();
             BindTable();
             RebuildGridColumns();
             _selectedColumnName = null;
-
         }
 
         private void ClearSortIfInvalid()
         {
             var sort = _table.DefaultView.Sort;
-            if (string.IsNullOrWhiteSpace(sort)) return;
+            if (string.IsNullOrWhiteSpace(sort))
+                return;
 
             var validCols = new HashSet<string>(_table.Columns.Cast<DataColumn>().Select(c => c.ColumnName));
             var parts = sort.Split(',').Select(p => p.Trim()).ToList();
@@ -353,7 +335,6 @@ namespace VUYAexe1
             var order = new List<string>();
             if (cols.Contains("Kategoria")) order.Add("[Kategoria] ASC");
             if (cols.Contains("Nazwa")) order.Add("[Nazwa] ASC");
-
             _table.DefaultView.Sort = string.Join(", ", order);
         }
 
@@ -366,8 +347,7 @@ namespace VUYAexe1
 
         private void BtnChooseImage_Click(object sender, RoutedEventArgs e)
         {
-            if (GridItems.SelectedItem is not DataRowView drv)
-                return;
+            if (GridItems.SelectedItem is not DataRowView drv) return;
 
             var dlg = new OpenFileDialog
             {
@@ -384,8 +364,7 @@ namespace VUYAexe1
 
         private void BtnClearImage_Click(object sender, RoutedEventArgs e)
         {
-            if (GridItems.SelectedItem is not DataRowView drv)
-                return;
+            if (GridItems.SelectedItem is not DataRowView drv) return;
 
             if (_table.Columns.Contains("ŚcieżkaObrazu"))
                 drv.Row["ŚcieżkaObrazu"] = "";
@@ -394,8 +373,7 @@ namespace VUYAexe1
 
         private void BtnChooseSound_Click(object sender, RoutedEventArgs e)
         {
-            if (GridItems.SelectedItem is not DataRowView drv)
-                return;
+            if (GridItems.SelectedItem is not DataRowView drv) return;
 
             var dlg = new OpenFileDialog
             {
@@ -411,8 +389,7 @@ namespace VUYAexe1
 
         private void BtnPlaySound_Click(object sender, RoutedEventArgs e)
         {
-            if (GridItems.SelectedItem is not DataRowView drv)
-                return;
+            if (GridItems.SelectedItem is not DataRowView drv) return;
 
             var path = SafeGet(drv, "ŚcieżkaDźwięku");
             if (!string.IsNullOrWhiteSpace(path) && File.Exists(path))
@@ -512,5 +489,3 @@ namespace VUYAexe1
             ApplyFilter();
             UpdateSelectionInfo();
         }
-    }
-}
