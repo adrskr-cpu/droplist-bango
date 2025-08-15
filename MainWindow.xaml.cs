@@ -9,7 +9,6 @@ using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -22,13 +21,14 @@ namespace VUYAexe1
         private readonly MediaPlayer _player = new MediaPlayer();
         private string? _selectedColumnName;
 
-
         public MainWindow()
         {
             InitializeComponent();
+
             Application.Current.DispatcherUnhandledException += (s, e) =>
             {
-                MessageBox.Show($"Wystąpił nieobsłużony wyjątek:\n{e.Exception.Message}", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Wystąpił nieobsłużony wyjątek:\n{e.Exception.Message}", "Błąd",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 e.Handled = true;
             };
 
@@ -37,7 +37,7 @@ namespace VUYAexe1
             ApplyFilter();
             UpdateSelectionInfo();
 
-            _player.MediaEnded += (_, __) => _player.Stop();
+            _player.MediaEnded += (_, _) => _player.Stop();
         }
 
         private void InitTable()
@@ -65,6 +65,7 @@ namespace VUYAexe1
             GridItems.ItemsSource = null;
             GridItems.ItemsSource = _table.DefaultView;
         }
+
         private void RebuildGridColumns()
         {
             GridItems.Columns.Clear();
@@ -81,6 +82,7 @@ namespace VUYAexe1
                 // Zachowaj bazowy ciemny styl nagłówków i tylko dodaj reakcję na klik
                 var baseHeaderStyle = GridItems.ColumnHeaderStyle;
                 var headerStyle = new Style(typeof(DataGridColumnHeader), baseHeaderStyle);
+
                 headerStyle.Setters.Add(new EventSetter(
                     UIElement.MouseLeftButtonUpEvent,
                     new MouseButtonEventHandler((s, e) =>
@@ -92,8 +94,8 @@ namespace VUYAexe1
                         }
                     })
                 ));
-                column.HeaderStyle = headerStyle;
 
+                column.HeaderStyle = headerStyle;
                 GridItems.Columns.Add(column);
             }
         }
@@ -105,6 +107,7 @@ namespace VUYAexe1
                 var name = SafeGet(drv, "Nazwa");
                 var cat = SafeGet(drv, "Kategoria");
                 var val = SafeGet(drv, "Wartość");
+
                 LblSelectedInfo.Text = $"Nazwa: {name} | Kategoria: {cat} | Wartość: {val}";
 
                 var imgPath = SafeGet(drv, "ŚcieżkaObrazu");
@@ -144,12 +147,14 @@ namespace VUYAexe1
             return string.Empty;
         }
 
-        // ---------------- Filtr ----------------
-
+        // Filtr
         private void ApplyFilter()
         {
             var selected = ((CbFilter.SelectedItem as ComboBoxItem)?.Content as string) ?? "";
-            if (!_table.Columns.Contains("Kategoria") || string.IsNullOrWhiteSpace(selected) || selected == "Wszystkie")
+
+            if (!_table.Columns.Contains("Kategoria") ||
+                string.IsNullOrWhiteSpace(selected) ||
+                selected == "Wszystkie")
             {
                 _table.DefaultView.RowFilter = "";
                 return;
@@ -181,8 +186,7 @@ namespace VUYAexe1
             ApplyFilter();
         }
 
-        // ---------------- Wiersze ----------------
-
+        // Wiersze
         private void BtnAddRow_Click(object sender, RoutedEventArgs e)
         {
             var r = _table.NewRow();
@@ -190,7 +194,9 @@ namespace VUYAexe1
             if (_table.Columns.Contains("Kategoria"))
             {
                 var selected = (CbFilter.SelectedItem as ComboBoxItem)?.Content?.ToString();
-                r["Kategoria"] = !string.IsNullOrWhiteSpace(selected) && selected != "Wszystkie" ? selected : "Inne";
+                r["Kategoria"] = !string.IsNullOrWhiteSpace(selected) && selected != "Wszystkie"
+                    ? selected
+                    : "Inne";
             }
 
             _table.Rows.Add(r);
@@ -209,25 +215,29 @@ namespace VUYAexe1
                 drv.Row.Delete();
         }
 
-        // ---------------- Kolumny ----------------
-
+        // Kolumny
         private void BtnAddColumn_Click(object sender, RoutedEventArgs e)
         {
             var name = TbNewColumnName.Text?.Trim();
+
             if (string.IsNullOrWhiteSpace(name))
             {
-                MessageBox.Show("Podaj nazwę nowej kolumny.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Podaj nazwę nowej kolumny.", "Kolumna",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
+
             if (_table.Columns.Contains(name))
             {
-                MessageBox.Show("Taka kolumna już istnieje.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Taka kolumna już istnieje.", "Kolumna",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             try
             {
                 _table.Columns.Add(name, typeof(string));
+
                 foreach (DataRow row in _table.Rows)
                     row[name] = "";
 
@@ -237,7 +247,8 @@ namespace VUYAexe1
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Błąd podczas dodawania kolumny:\n{ex.Message}", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Błąd podczas dodawania kolumny:\n{ex.Message}", "Błąd",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -246,14 +257,16 @@ namespace VUYAexe1
             var oldName = _selectedColumnName;
             if (string.IsNullOrWhiteSpace(oldName))
             {
-                MessageBox.Show("Zaznacz kolumnę do zmiany nazwy (kliknij jej nagłówek).", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Zaznacz kolumnę do zmiany nazwy (kliknij jej nagłówek).", "Kolumna",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
             var newName = TbRenameColumnName?.Text?.Trim();
             if (string.IsNullOrWhiteSpace(newName))
             {
-                MessageBox.Show("Podaj nową nazwę kolumny.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Podaj nową nazwę kolumny.", "Kolumna",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
@@ -262,20 +275,22 @@ namespace VUYAexe1
 
             if (_table.Columns.Contains(newName))
             {
-                MessageBox.Show("Kolumna o takiej nazwie już istnieje.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Kolumna o takiej nazwie już istnieje.", "Kolumna",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             try
             {
                 if (_table.Columns.Contains(oldName))
-                {
-                    _table.Columns[oldName].ColumnName = newName!;
-                }
+                    _table.Columns[oldName!]!.ColumnName = newName!;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Nie udało się zmienić nazwy kolumny:\n{ex.Message}", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    $"Nie udało się zmienić nazwy kolumny:\n{ex.Message}",
+                    "Kolumna",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -284,7 +299,8 @@ namespace VUYAexe1
             BindTable();
             RebuildGridColumns();
 
-            var newCol = GridItems?.Columns.FirstOrDefault(c => string.Equals(c.Header?.ToString(), newName, StringComparison.Ordinal));
+            var newCol = GridItems?.Columns.FirstOrDefault(c =>
+                string.Equals(c.Header?.ToString(), newName, StringComparison.Ordinal));
             if (newCol != null)
                 GridItems!.CurrentColumn = newCol;
         }
@@ -294,9 +310,11 @@ namespace VUYAexe1
             var name = _selectedColumnName;
             if (string.IsNullOrWhiteSpace(name))
             {
-                MessageBox.Show("Zaznacz kolumnę do usunięcia (kliknij jej nagłówek).", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Zaznacz kolumnę do usunięcia (kliknij jej nagłówek).", "Kolumna",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
+
             if (!_table.Columns.Contains(name))
                 return;
 
@@ -315,11 +333,12 @@ namespace VUYAexe1
                 return;
 
             var validCols = new HashSet<string>(_table.Columns.Cast<DataColumn>().Select(c => c.ColumnName));
+
             var parts = sort.Split(',').Select(p => p.Trim()).ToList();
             var filtered = parts.Where(p =>
             {
                 var space = p.IndexOf(' ');
-                var col = space > 0 ? p.Substring(0, space) : p;
+                var col = space > 0 ? p[..space] : p;
                 col = col.Trim('[', ']');
                 return validCols.Contains(col);
             }).ToList();
@@ -327,8 +346,7 @@ namespace VUYAexe1
             _table.DefaultView.Sort = string.Join(", ", filtered);
         }
 
-        // ---------------- Sort ----------------
-
+        // Sort
         private void BtnSort_Click(object sender, RoutedEventArgs e)
         {
             var cols = _table.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToHashSet();
@@ -338,8 +356,7 @@ namespace VUYAexe1
             _table.DefaultView.Sort = string.Join(", ", order);
         }
 
-        // ---------------- Podgląd / Zasoby ----------------
-
+        // Podgląd / Zasoby
         private void GridItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateSelectionInfo();
@@ -354,6 +371,7 @@ namespace VUYAexe1
                 Filter = "Obrazy|*.png;*.jpg;*.jpeg;*.bmp;*.gif|Wszystkie pliki|*.*",
                 Title = "Wybierz obraz"
             };
+
             if (dlg.ShowDialog() == true)
             {
                 EnsureColumn("ŚcieżkaObrazu");
@@ -368,6 +386,7 @@ namespace VUYAexe1
 
             if (_table.Columns.Contains("ŚcieżkaObrazu"))
                 drv.Row["ŚcieżkaObrazu"] = "";
+
             ImgPreview.Source = null;
         }
 
@@ -380,6 +399,7 @@ namespace VUYAexe1
                 Filter = "Dźwięki|*.wav;*.mp3;*.ogg;*.flac|Wszystkie pliki|*.*",
                 Title = "Wybierz dźwięk"
             };
+
             if (dlg.ShowDialog() == true)
             {
                 EnsureColumn("ŚcieżkaDźwięku");
@@ -420,8 +440,7 @@ namespace VUYAexe1
             }
         }
 
-        // ---------------- Zapis / Odczyt JSON ----------------
-
+        // Zapis / Odczyt JSON
         private sealed class TableDto
         {
             public List<string> Columns { get; set; } = new();
@@ -437,6 +456,7 @@ namespace VUYAexe1
                 AddExtension = true,
                 DefaultExt = "json"
             };
+
             if (dlg.ShowDialog() != true) return;
 
             var dto = new TableDto
@@ -453,6 +473,7 @@ namespace VUYAexe1
                 WriteIndented = true,
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
+
             File.WriteAllText(dlg.FileName, JsonSerializer.Serialize(dto, options));
         }
 
@@ -463,24 +484,51 @@ namespace VUYAexe1
                 Filter = "JSON|*.json",
                 Title = "Wczytaj z JSON"
             };
+
             if (dlg.ShowDialog() != true) return;
 
-            var json = File.ReadAllText(dlg.FileName);
-            var dto = JsonSerializer.Deserialize<TableDto>(json) ?? new TableDto();
+            string json;
+            try
+            {
+                json = File.ReadAllText(dlg.FileName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Nie udało się odczytać pliku:\n{ex.Message}", "Błąd",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            TableDto dto;
+            try
+            {
+                dto = JsonSerializer.Deserialize<TableDto>(json) ?? new TableDto();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Nieprawidłowy JSON:\n{ex.Message}", "Błąd",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             _table.Clear();
             _table.Columns.Clear();
 
-            foreach (var col in dto.Columns)
+            foreach (var col in dto.Columns ?? Enumerable.Empty<string>())
                 _table.Columns.Add(col, typeof(string));
 
-            foreach (var rowDict in dto.Rows)
+            foreach (var rowDict in dto.Rows ?? Enumerable.Empty<Dictionary<string, string?>>())
             {
                 var row = _table.NewRow();
+
                 foreach (DataColumn c in _table.Columns)
                 {
-                    row[c.ColumnName] = rowDict.TryGetValue(c.ColumnName, out var val) ? val ?? "" : "";
+                    if (rowDict != null && rowDict.TryGetValue(c.ColumnName, out var val))
+                        row[c.ColumnName] = val ?? "";
+                    else
+                        row[c.ColumnName] = "";
                 }
+
                 _table.Rows.Add(row);
             }
 
@@ -489,3 +537,5 @@ namespace VUYAexe1
             ApplyFilter();
             UpdateSelectionInfo();
         }
+    }
+}
