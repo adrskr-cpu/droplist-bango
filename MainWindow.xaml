@@ -28,6 +28,106 @@
             <Setter Property="Padding" Value="6"/>
             <Setter Property="Margin" Value="0,0,0,8"/>
         </Style>
+        <!-- Styl pozycji listy w ciemnym motywie -->
+        <Style x:Key="DarkComboBoxItem" TargetType="ComboBoxItem">
+            <Setter Property="Foreground" Value="#f0f0f0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}">
+                            <ContentPresenter Margin="4,0"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#333842"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#094771"/>
+                                <Setter Property="Foreground" Value="#ffffff"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Styl ComboBoxa w ciemnym motywie z ciemną listą -->
+        <!-- Styl strzałki dla ComboBoxa -->
+        <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+            <Grid>
+                <Border Background="#2d2d30"
+                BorderBrush="#3f3f46"
+                BorderThickness="1"/>
+                <Path x:Name="Arrow"
+              Fill="#f0f0f0"
+              HorizontalAlignment="Right"
+              VerticalAlignment="Center"
+              Margin="0,0,6,0"
+              Data="M 0 0 L 4 4 L 8 0 Z"
+              Width="10" Height="6"/>
+            </Grid>
+        </ControlTemplate>
+
+        <Style x:Key="DarkComboBox" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+            <Setter Property="ItemContainerStyle" Value="{StaticResource DarkComboBoxItem}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton"
+                                  Template="{StaticResource ComboBoxToggleButton}"
+                                  Grid.Column="2"
+                                  Focusable="False"
+                                  IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                  ClickMode="Press"/>
+                            <ContentPresenter x:Name="ContentSite"
+                                      IsHitTestVisible="False"
+                                      Content="{TemplateBinding SelectionBoxItem}"
+                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                      Margin="6,3,24,3"
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Left"/>
+                            <Popup x:Name="Popup"
+                           Placement="Bottom"
+                           IsOpen="{TemplateBinding IsDropDownOpen}"
+                           AllowsTransparency="True"
+                           Focusable="False"
+                           PopupAnimation="Slide">
+                                <Grid x:Name="DropDown"
+                              SnapsToDevicePixels="True"
+                              MinWidth="{TemplateBinding ActualWidth}"
+                              MaxHeight="200">
+                                    <Border x:Name="DropDownBorder"
+                                    Background="#2d2d30"
+                                    BorderBrush="#3f3f46"
+                                    BorderThickness="1"/>
+                                    <ScrollViewer Margin="4,6,4,6"
+                                          SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True"
+                                            KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasItems" Value="False">
+                                <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="#888"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#2f2f33"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Grid Margin="10">
@@ -38,31 +138,50 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" LastChildFill="False">
-            <StackPanel Orientation="Horizontal" Margin="0,0,10,0" DockPanel.Dock="Left">
-                <TextBlock Text="Filtr:" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                <ComboBox x:Name="CbFilter" Width="150" SelectionChanged="CbFilter_SelectionChanged">
+            <Grid DockPanel.Dock="Left" Margin="0,0,10,0" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Filtr label -->
+                    <ColumnDefinition Width="150"/>
+                    <!-- ComboBox -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Wyczyść -->
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Filtr:" VerticalAlignment="Center" Margin="0,0,6,0" Grid.Column="0"/>
+
+                <ComboBox x:Name="CbFilter"
+              Grid.Column="1"
+              Style="{StaticResource DarkComboBox}"
+              SelectionChanged="CbFilter_SelectionChanged"
+              Height="24">
                     <ComboBoxItem Content="Wszystkie" IsSelected="True"/>
                     <ComboBoxItem Content="Broń"/>
                     <ComboBoxItem Content="Pancerz"/>
                     <ComboBoxItem Content="Tarcze"/>
                     <ComboBoxItem Content="Inne"/>
                 </ComboBox>
-                <Button Content="Wyczyść" Margin="8,0,0,0" Click="BtnClearFilter_Click"/>
-            </StackPanel>
+
+                <Button Content="Wyczyść"
+            Grid.Column="2"
+            Margin="8,0,0,0"
+            Height="24"
+            Click="BtnClearFilter_Click"/>
+            </Grid>
 
             <StackPanel Orientation="Horizontal" Margin="10,0,10,0" DockPanel.Dock="Left">
-                <Button Content="Dodaj wiersz" Click="BtnAddRow_Click"/>
-                <Button Content="Usuń wiersz" Margin="8,0,0,0" Click="BtnDeleteRow_Click"/>
+                <Button Content="+W" Width="40" Height="24" Click="BtnAddRow_Click"/>
+                <Button Content="-W" Width="40" Height="24" Margin="8,0,0,0" Click="BtnDeleteRow_Click"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="10,0,10,0" DockPanel.Dock="Left">
                 <TextBlock Text="Nowa kolumna:" VerticalAlignment="Center" Margin="0,0,6,0"/>
                 <TextBox x:Name="TbNewColumnName" Width="160" Margin="0,0,8,0"/>
-                <Button Content="Dodaj kolumnę" Click="BtnAddColumn_Click" Margin="0,0,8,0"/>
+                <Button Content="+K" Width="40" Height="24" Click="BtnAddColumn_Click" Margin="0,0,8,0"/>
                 <TextBlock Text="Zmień nazwę na:" VerticalAlignment="Center" Margin="0,0,6,0"/>
                 <TextBox x:Name="TbRenameColumnName" Width="160" Margin="0,0,8,0"/>
                 <Button Content="Zmień nazwę" Click="BtnRenameColumn_Click" Margin="0,0,8,0"/>
-                <Button Content="Usuń kolumnę" Click="BtnDeleteColumn_Click"/>
+                <Button Content="-K" Width="40" Height="24" Click="BtnDeleteColumn_Click"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
@@ -77,25 +196,35 @@
             </Grid.ColumnDefinitions>
 
             <DataGrid x:Name="GridItems"
-                      AutoGenerateColumns="True"
-                      CanUserAddRows="False"
-                      CanUserDeleteRows="False"
-                      IsReadOnly="False"
-                      SelectionMode="Single"
-                      SelectionUnit="FullRow"
-                      CanUserReorderColumns="True"
-                      CanUserResizeColumns="True"
-                      CanUserSortColumns="True"
-                      Margin="0,8,8,0"
-                      Background="#252526"
-                      Foreground="#f0f0f0"
-                      RowBackground="#2d2d30"
-                      AlternatingRowBackground="#1f1f23"
-                      GridLinesVisibility="All"
-                      HorizontalGridLinesBrush="#3f3f46"
-                      VerticalGridLinesBrush="#3f3f46"
-                      ColumnHeaderHeight="28"
-                      SelectionChanged="GridItems_SelectionChanged">
+          AutoGenerateColumns="False"
+          CanUserAddRows="False"
+          CanUserDeleteRows="False"
+          IsReadOnly="False"
+          SelectionMode="Single"
+          SelectionUnit="FullRow"
+          CanUserReorderColumns="True"
+          CanUserResizeColumns="True"
+          CanUserSortColumns="True"
+          Margin="0,8,8,0"
+          Background="#252526"
+          Foreground="#f0f0f0"
+          RowBackground="#2d2d30"
+          AlternatingRowBackground="#1f1f23"
+          GridLinesVisibility="All"
+          HorizontalGridLinesBrush="#3f3f46"
+          VerticalGridLinesBrush="#3f3f46"
+          ColumnHeaderHeight="28"
+          SelectionChanged="GridItems_SelectionChanged">
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Nazwa" Binding="{Binding Nazwa}" Width="*" />
+                    <DataGridTextColumn Header="Kategoria" Binding="{Binding Kategoria}" Width="150" />
+                    <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="2*" />
+                    <DataGridTextColumn Header="Wartość" Binding="{Binding Wartość}" Width="120" />
+                    <DataGridTextColumn Header="ŚcieżkaObrazu" Binding="{Binding ŚcieżkaObrazu}" Width="*" />
+                    <!-- Celowo brak kolumny ŚcieżkaDźwięku -->
+                </DataGrid.Columns>
+
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="DataGridColumnHeader">
                         <Setter Property="Background" Value="#2d2d30"/>
@@ -103,6 +232,7 @@
                         <Setter Property="BorderBrush" Value="#3f3f46"/>
                     </Style>
                 </DataGrid.ColumnHeaderStyle>
+
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
                         <Setter Property="Background" Value="#2d2d30"/>
@@ -130,14 +260,6 @@
                                 <Button Content="Wybierz obraz" Click="BtnChooseImage_Click"/>
                                 <Button Content="Wyczyść" Margin="8,0,0,0" Click="BtnClearImage_Click"/>
                             </StackPanel>
-                        </StackPanel>
-                    </GroupBox>
-
-                    <GroupBox Header="Dźwięk">
-                        <StackPanel Orientation="Horizontal">
-                            <Button Content="Wybierz dźwięk" Click="BtnChooseSound_Click"/>
-                            <Button Content="Odtwórz" Margin="8,0,0,0" Click="BtnPlaySound_Click"/>
-                            <Button Content="Stop" Margin="8,0,0,0" Click="BtnStopSound_Click"/>
                         </StackPanel>
                     </GroupBox>
 
