@@ -8,7 +8,9 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -18,10 +20,18 @@ namespace VUYAexe1
     {
         private readonly DataTable _table = new DataTable("Items");
         private readonly MediaPlayer _player = new MediaPlayer();
+        private string? _selectedColumnName;
+
 
         public MainWindow()
         {
             InitializeComponent();
+            Application.Current.DispatcherUnhandledException += (s, e) =>
+            {
+                MessageBox.Show($"Wystąpił nieobsłużony wyjątek:\n{e.Exception.Message}", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+                e.Handled = true;
+            };
+
             InitTable();
             BindTable();
             ApplyFilter();
@@ -54,6 +64,37 @@ namespace VUYAexe1
         {
             GridItems.ItemsSource = null;
             GridItems.ItemsSource = _table.DefaultView;
+        }
+        private void RebuildGridColumns()
+        {
+            GridItems.Columns.Clear();
+
+            foreach (DataColumn col in _table.Columns)
+            {
+                var column = new DataGridTextColumn
+                {
+                    Header = col.ColumnName,
+                    Binding = new System.Windows.Data.Binding(col.ColumnName),
+                    Width = new DataGridLength(1, DataGridLengthUnitType.Star)
+                };
+
+                // Dodaj obsługę kliknięcia nagłówka kolumny
+                column.HeaderStyle = new Style(typeof(DataGridColumnHeader));
+                column.HeaderStyle.Setters.Add(new EventSetter
+                {
+                    Event = MouseLeftButtonUpEvent,
+                    Handler = new MouseButtonEventHandler((s, e) =>
+                    {
+                        if (s is DataGridColumnHeader header && header.Content is string name)
+                        {
+                            _selectedColumnName = name;
+                            TbRenameColumnName.Text = name; // opcjonalnie: automatyczne wstawienie nazwy
+                        }
+                    })
+                });
+
+                GridItems.Columns.Add(column);
+            }
         }
 
         private void UpdateSelectionInfo()
@@ -183,24 +224,28 @@ namespace VUYAexe1
                 return;
             }
 
-            _table.Columns.Add(name, typeof(string));
-            TbNewColumnName.Clear();
-            BindTable();
-
-            var col = GridItems.Columns.FirstOrDefault(c => string.Equals(c.Header?.ToString(), name, StringComparison.Ordinal));
-            if (col != null)
+            try
             {
-                GridItems.CurrentColumn = col;
-                if (GridItems.Items.Count > 0)
-                    GridItems.CurrentCell = new DataGridCellInfo(GridItems.Items[0], col);
+                _table.Columns.Add(name, typeof(string));
+                foreach (DataRow row in _table.Rows)
+                    row[name] = "";
+
+                BindTable();
+                RebuildGridColumns();
+
+                TbNewColumnName.Clear();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Błąd podczas dodawania kolumny:\n{ex.Message}", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void BtnRenameColumn_Click(object sender, RoutedEventArgs e)
         {
             // Bezpieczne pobranie kolumny
-            var current = GridItems?.CurrentColumn;
-            if (current == null || current.Header is not string oldName || string.IsNullOrWhiteSpace(oldName))
+            var oldName = _selectedColumnName;
+            if (string.IsNullOrWhiteSpace(oldName))
             {
                 MessageBox.Show("Zaznacz kolumnę do zmiany nazwy (kliknij jej nagłówek).",
                                 "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -251,6 +296,7 @@ namespace VUYAexe1
 
             TbRenameColumnName?.Clear();
             BindTable();
+            RebuildGridColumns();
 
             // Ustaw fokus na nową kolumnę (jeśli istnieje)
             var newCol = GridItems?.Columns
@@ -261,8 +307,8 @@ namespace VUYAexe1
 
         private void BtnDeleteColumn_Click(object sender, RoutedEventArgs e)
         {
-            var current = GridItems?.CurrentColumn;
-            if (current?.Header is not string name || string.IsNullOrWhiteSpace(name))
+            var name = _selectedColumnName;
+            if (string.IsNullOrWhiteSpace(name))
             {
                 MessageBox.Show("Zaznacz kolumnę do usunięcia (kliknij jej nagłówek).",
                                 "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -276,6 +322,9 @@ namespace VUYAexe1
             ClearFilterIfInvalid();
             ClearSortIfInvalid();
             BindTable();
+            RebuildGridColumns();
+            _selectedColumnName = null;
+
         }
 
         private void ClearSortIfInvalid()
@@ -459,6 +508,7 @@ namespace VUYAexe1
             }
 
             BindTable();
+            RebuildGridColumns();
             ApplyFilter();
             UpdateSelectionInfo();
         }
