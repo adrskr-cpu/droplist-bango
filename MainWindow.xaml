@@ -1,9 +1,11 @@
 <Window x:Class="VUYAexe1.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="VUYAexe1 - Edytor przedmiotów" Height="700" Width="1100"
+        Title="VUYAexe1 - Edytor przedmiotów"
+        Height="700" Width="1100"
         WindowStartupLocation="CenterScreen"
         Background="#1e1e1e" Foreground="#f0f0f0">
+
     <Window.Resources>
         <Style TargetType="Button">
             <Setter Property="Background" Value="#2d2d30"/>
@@ -11,16 +13,19 @@
             <Setter Property="BorderBrush" Value="#3f3f46"/>
             <Setter Property="Padding" Value="8,4"/>
         </Style>
+
         <Style TargetType="TextBox">
             <Setter Property="Background" Value="#2d2d30"/>
             <Setter Property="Foreground" Value="#f0f0f0"/>
             <Setter Property="BorderBrush" Value="#3f3f46"/>
         </Style>
+
         <Style TargetType="ComboBox">
             <Setter Property="Background" Value="#2d2d30"/>
             <Setter Property="Foreground" Value="#f0f0f0"/>
             <Setter Property="BorderBrush" Value="#3f3f46"/>
         </Style>
+
         <Style TargetType="GroupBox">
             <Setter Property="Background" Value="#252526"/>
             <Setter Property="Foreground" Value="#f0f0f0"/>
@@ -28,6 +33,7 @@
             <Setter Property="Padding" Value="6"/>
             <Setter Property="Margin" Value="0,0,0,8"/>
         </Style>
+
         <!-- Styl pozycji listy w ciemnym motywie -->
         <Style x:Key="DarkComboBoxItem" TargetType="ComboBoxItem">
             <Setter Property="Foreground" Value="#f0f0f0"/>
@@ -58,16 +64,10 @@
         <!-- Styl strzałki dla ComboBoxa -->
         <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
             <Grid>
-                <Border Background="#2d2d30"
-                BorderBrush="#3f3f46"
-                BorderThickness="1"/>
-                <Path x:Name="Arrow"
-              Fill="#f0f0f0"
-              HorizontalAlignment="Right"
-              VerticalAlignment="Center"
-              Margin="0,0,6,0"
-              Data="M 0 0 L 4 4 L 8 0 Z"
-              Width="10" Height="6"/>
+                <Border Background="#2d2d30" BorderBrush="#3f3f46" BorderThickness="1"/>
+                <Path x:Name="Arrow" Fill="#f0f0f0"
+                      HorizontalAlignment="Right" VerticalAlignment="Center"
+                      Margin="0,0,6,0" Data="M 0 0 L 4 4 L 8 0 Z" Width="10" Height="6"/>
             </Grid>
         </ControlTemplate>
 
@@ -78,37 +78,32 @@
                     <ControlTemplate TargetType="ComboBox">
                         <Grid>
                             <ToggleButton x:Name="ToggleButton"
-                                  Template="{StaticResource ComboBoxToggleButton}"
-                                  Grid.Column="2"
-                                  Focusable="False"
-                                  IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                  ClickMode="Press"/>
+                                          Template="{StaticResource ComboBoxToggleButton}"
+                                          Grid.Column="2"
+                                          Focusable="False"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press"/>
                             <ContentPresenter x:Name="ContentSite"
-                                      IsHitTestVisible="False"
-                                      Content="{TemplateBinding SelectionBoxItem}"
-                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                                      Margin="6,3,24,3"
-                                      VerticalAlignment="Center"
-                                      HorizontalAlignment="Left"/>
+                                              IsHitTestVisible="False"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                              Margin="6,3,24,3"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"/>
                             <Popup x:Name="Popup"
-                           Placement="Bottom"
-                           IsOpen="{TemplateBinding IsDropDownOpen}"
-                           AllowsTransparency="True"
-                           Focusable="False"
-                           PopupAnimation="Slide">
-                                <Grid x:Name="DropDown"
-                              SnapsToDevicePixels="True"
-                              MinWidth="{TemplateBinding ActualWidth}"
-                              MaxHeight="200">
+                                   Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Slide">
+                                <Grid x:Name="DropDown" SnapsToDevicePixels="True"
+                                      MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200">
                                     <Border x:Name="DropDownBorder"
-                                    Background="#2d2d30"
-                                    BorderBrush="#3f3f46"
-                                    BorderThickness="1"/>
-                                    <ScrollViewer Margin="4,6,4,6"
-                                          SnapsToDevicePixels="True">
-                                        <StackPanel IsItemsHost="True"
-                                            KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                            Background="#2d2d30"
+                                            BorderBrush="#3f3f46" BorderThickness="1"/>
+                                    <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
                                     </ScrollViewer>
                                 </Grid>
                             </Popup>
@@ -149,24 +144,16 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Text="Filtr:" VerticalAlignment="Center" Margin="0,0,6,0" Grid.Column="0"/>
-
-                <ComboBox x:Name="CbFilter"
-              Grid.Column="1"
-              Style="{StaticResource DarkComboBox}"
-              SelectionChanged="CbFilter_SelectionChanged"
-              Height="24">
+                <ComboBox x:Name="CbFilter" Grid.Column="1" Style="{StaticResource DarkComboBox}"
+                          SelectionChanged="CbFilter_SelectionChanged" Height="24">
                     <ComboBoxItem Content="Wszystkie" IsSelected="True"/>
                     <ComboBoxItem Content="Broń"/>
                     <ComboBoxItem Content="Pancerz"/>
                     <ComboBoxItem Content="Tarcze"/>
                     <ComboBoxItem Content="Inne"/>
                 </ComboBox>
-
-                <Button Content="Wyczyść"
-            Grid.Column="2"
-            Margin="8,0,0,0"
-            Height="24"
-            Click="BtnClearFilter_Click"/>
+                <Button Content="Wyczyść" Grid.Column="2" Margin="8,0,0,0" Height="24"
+                        Click="BtnClearFilter_Click"/>
             </Grid>
 
             <StackPanel Orientation="Horizontal" Margin="10,0,10,0" DockPanel.Dock="Left">
@@ -196,32 +183,31 @@
             </Grid.ColumnDefinitions>
 
             <DataGrid x:Name="GridItems"
-          AutoGenerateColumns="False"
-          CanUserAddRows="False"
-          CanUserDeleteRows="False"
-          IsReadOnly="False"
-          SelectionMode="Single"
-          SelectionUnit="FullRow"
-          CanUserReorderColumns="True"
-          CanUserResizeColumns="True"
-          CanUserSortColumns="True"
-          Margin="0,8,8,0"
-          Background="#252526"
-          Foreground="#f0f0f0"
-          RowBackground="#2d2d30"
-          AlternatingRowBackground="#1f1f23"
-          GridLinesVisibility="All"
-          HorizontalGridLinesBrush="#3f3f46"
-          VerticalGridLinesBrush="#3f3f46"
-          ColumnHeaderHeight="28"
-          SelectionChanged="GridItems_SelectionChanged">
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="False"
+                      SelectionMode="Single"
+                      SelectionUnit="FullRow"
+                      CanUserReorderColumns="True"
+                      CanUserResizeColumns="True"
+                      CanUserSortColumns="True"
+                      Margin="0,8,8,0"
+                      Background="#252526" Foreground="#f0f0f0"
+                      RowBackground="#2d2d30"
+                      AlternatingRowBackground="#1f1f23"
+                      GridLinesVisibility="All"
+                      HorizontalGridLinesBrush="#3f3f46"
+                      VerticalGridLinesBrush="#3f3f46"
+                      ColumnHeaderHeight="28"
+                      SelectionChanged="GridItems_SelectionChanged">
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Nazwa" Binding="{Binding Nazwa}" Width="*" />
-                    <DataGridTextColumn Header="Kategoria" Binding="{Binding Kategoria}" Width="150" />
-                    <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="2*" />
-                    <DataGridTextColumn Header="Wartość" Binding="{Binding Wartość}" Width="120" />
-                    <DataGridTextColumn Header="ŚcieżkaObrazu" Binding="{Binding ŚcieżkaObrazu}" Width="*" />
+                    <DataGridTextColumn Header="Nazwa" Binding="{Binding Nazwa}" Width="*"/>
+                    <DataGridTextColumn Header="Kategoria" Binding="{Binding Kategoria}" Width="150"/>
+                    <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="2*"/>
+                    <DataGridTextColumn Header="Wartość" Binding="{Binding Wartość}" Width="120"/>
+                    <DataGridTextColumn Header="ŚcieżkaObrazu" Binding="{Binding ŚcieżkaObrazu}" Width="*"/>
                     <!-- Celowo brak kolumny ŚcieżkaDźwięku -->
                 </DataGrid.Columns>
 
@@ -255,7 +241,7 @@
 
                     <GroupBox Header="Obraz">
                         <StackPanel Orientation="Vertical">
-                            <Image x:Name="ImgPreview" Width="380" Height="240" Stretch="Uniform" Margin="0,0,0,6" />
+                            <Image x:Name="ImgPreview" Width="380" Height="240" Stretch="Uniform" Margin="0,0,0,6"/>
                             <StackPanel Orientation="Horizontal">
                                 <Button Content="Wybierz obraz" Click="BtnChooseImage_Click"/>
                                 <Button Content="Wyczyść" Margin="8,0,0,0" Click="BtnClearImage_Click"/>
