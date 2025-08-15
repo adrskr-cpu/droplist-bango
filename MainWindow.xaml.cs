@@ -1,3 +1,4 @@
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -7,9 +8,9 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Microsoft.Win32;
 
 namespace VUYAexe1
 {
@@ -93,14 +94,19 @@ namespace VUYAexe1
             }
         }
 
-        private static string SafeGet(DataRowView drv, string column)
-            => drv.DataView.Table.Columns.Contains(column) ? drv.Row[column]?.ToString() ?? "" : "";
+        private static string SafeGet(DataRowView? drv, string column)
+        {
+            if (drv?.DataView?.Table?.Columns.Contains(column) == true)
+                return drv.Row[column]?.ToString() ?? string.Empty;
+
+            return string.Empty;
+        }
 
         // ---------------- Filtr ----------------
 
         private void ApplyFilter()
         {
-            var selected = (CbFilter.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            var selected = ((CbFilter.SelectedItem as ComboBoxItem)?.Content as string) ?? "";
             if (!_table.Columns.Contains("Kategoria") || string.IsNullOrWhiteSpace(selected) || selected == "Wszystkie")
             {
                 _table.DefaultView.RowFilter = "";
@@ -117,7 +123,7 @@ namespace VUYAexe1
             {
                 _table.DefaultView.RowFilter = "";
                 if (CbFilter.Items.Count > 0)
-                    (CbFilter.Items[0] as ComboBoxItem)!.IsSelected = true; // "Wszystkie"
+                    CbFilter.SelectedIndex = 0; // "Wszystkie"
             }
         }
 
@@ -192,58 +198,81 @@ namespace VUYAexe1
 
         private void BtnRenameColumn_Click(object sender, RoutedEventArgs e)
         {
-            var current = GridItems.CurrentColumn;
-            if (current?.Header is not string oldName || string.IsNullOrWhiteSpace(oldName))
+            // Bezpieczne pobranie kolumny
+            var current = GridItems?.CurrentColumn;
+            if (current == null || current.Header is not string oldName || string.IsNullOrWhiteSpace(oldName))
             {
-                MessageBox.Show("Zaznacz kolumnę do zmiany nazwy (kliknij jej nagłówek).", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Zaznacz kolumnę do zmiany nazwy (kliknij jej nagłówek).",
+                                "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
-            var newName = TbRenameColumnName.Text?.Trim();
+            // Bezpieczne pobranie nowej nazwy (zgodnie z XAML: TbRenameColumnName)
+            var newName = TbRenameColumnName?.Text?.Trim();
             if (string.IsNullOrWhiteSpace(newName))
             {
-                MessageBox.Show("Podaj nową nazwę kolumny.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Podaj nową nazwę kolumny.",
+                                "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
+
+            // Nazwa identyczna
             if (string.Equals(oldName, newName, StringComparison.Ordinal))
                 return;
-            if (_table.Columns.Contains(newName))
+
+            // Sprawdzenie duplikatu
+            if (_table?.Columns.Contains(newName) == true)
             {
-                MessageBox.Show("Kolumna o takiej nazwie już istnieje.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Kolumna o takiej nazwie już istnieje.",
+                                "Kolumna", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             try
             {
-                _table.Columns[oldName].ColumnName = newName;
+                // Null-safe zmiana nazwy
+                if (_table is not null)
+                {
+                    var columns = _table.Columns;
+                    if (!string.IsNullOrEmpty(oldName) && columns.Contains(oldName))
+                    {
+                        var col = columns[oldName];
+                        if (col != null)
+                            col.ColumnName = newName!; // w tym miejscu mamy gwarancję, że newName nie jest null
+                    }
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Nie udało się zmienić nazwy kolumny:\n{ex.Message}", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Nie udało się zmienić nazwy kolumny:\n{ex.Message}",
+                                "Kolumna", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            TbRenameColumnName.Clear();
+            TbRenameColumnName?.Clear();
             BindTable();
 
-            var newCol = GridItems.Columns.FirstOrDefault(c => string.Equals(c.Header?.ToString(), newName, StringComparison.Ordinal));
+            // Ustaw fokus na nową kolumnę (jeśli istnieje)
+            var newCol = GridItems?.Columns
+                                  .FirstOrDefault(c => string.Equals(c.Header?.ToString(), newName, StringComparison.Ordinal));
             if (newCol != null)
-                GridItems.CurrentColumn = newCol;
+                GridItems!.CurrentColumn = newCol;
         }
 
         private void BtnDeleteColumn_Click(object sender, RoutedEventArgs e)
         {
-            var current = GridItems.CurrentColumn;
+            var current = GridItems?.CurrentColumn;
             if (current?.Header is not string name || string.IsNullOrWhiteSpace(name))
             {
-                MessageBox.Show("Zaznacz kolumnę do usunięcia (kliknij jej nagłówek).", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Zaznacz kolumnę do usunięcia (kliknij jej nagłówek).",
+                                "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
-            if (!_table.Columns.Contains(name))
+            if (_table?.Columns.Contains(name) != true)
                 return;
 
-            _table.Columns.Remove(name);
+            _table!.Columns.Remove(name);
             ClearFilterIfInvalid();
             ClearSortIfInvalid();
             BindTable();
