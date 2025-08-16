@@ -1,503 +1,282 @@
-using Microsoft.Win32;
-using Microsoft.VisualBasic; // dla Interaction.InputBox
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-
-namespace VUYAexe1
-{
-    public partial class MainWindow : Window
-    {
-        private readonly DataTable _table = new DataTable("Items");
-        private readonly MediaPlayer _player = new MediaPlayer();
-        private string? _selectedColumnName;
-
-        public MainWindow()
-        {
-            InitializeComponent();
-
-            Application.Current.DispatcherUnhandledException += (s, e) =>
-            {
-                MessageBox.Show($"Wystąpił nieobsłużony wyjątek:\n{e.Exception.Message}", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
-                e.Handled = true;
-            };
-
-            InitTable();
-            BindTable();
-            RebuildGridColumns();
-            ApplyFilter();
-            UpdateSelectionInfo();
-
-            _player.MediaEnded += (_, _) => _player.Stop();
-        }
-
-        private void InitTable()
-        {
-            _table.Clear();
-            _table.Columns.Clear();
-
-            _table.Columns.Add("Nazwa", typeof(string));
-            _table.Columns.Add("Kategoria", typeof(string));
-            _table.Columns.Add("Opis", typeof(string));
-            _table.Columns.Add("Wartość", typeof(string));
-            _table.Columns.Add("ŚcieżkaObrazu", typeof(string));
-            _table.Columns.Add("ŚcieżkaDźwięku", typeof(string));
-
-            var r = _table.NewRow();
-            r["Nazwa"] = "Miecz żelazny";
-            r["Kategoria"] = "Broń";
-            r["Opis"] = "Podstawowy miecz.";
-            r["Wartość"] = "100";
-            _table.Rows.Add(r);
-        }
-
-        private void BindTable()
-        {
-            GridItems.ItemsSource = null;
-            GridItems.ItemsSource = _table.DefaultView;
-        }
-
-        private void RebuildGridColumns()
-        {
-            GridItems.Columns.Clear();
-
-            foreach (DataColumn col in _table.Columns)
-            {
-                var column = new DataGridTextColumn
-                {
-                    Header = col.ColumnName,
-                    Binding = new System.Windows.Data.Binding(col.ColumnName),
-                    Width = new DataGridLength(1, DataGridLengthUnitType.Star)
-                };
-
-                // Styl nagłówka oparty na istniejącym + reakcja na klik + menu kontekstowe
-                var baseHeaderStyle = GridItems.ColumnHeaderStyle;
-                var headerStyle = new Style(typeof(DataGridColumnHeader), baseHeaderStyle);
-
-                // Zapamiętanie nazwy zaznaczonej kolumny po LPM (opcjonalne)
-                headerStyle.Setters.Add(new EventSetter(
-                    UIElement.MouseLeftButtonUpEvent,
-                    new MouseButtonEventHandler((s, e) =>
-                    {
-                        if (s is DataGridColumnHeader header && header.Content is string name)
-                        {
-                            _selectedColumnName = name;
-                        }
-                    })
-                ));
-
-                // Menu kontekstowe PPM: Zmień nazwę / Usuń
-                headerStyle.Setters.Add(new Setter(DataGridColumnHeader.ContextMenuProperty, CreateColumnHeaderContextMenu()));
-
-                column.HeaderStyle = headerStyle;
-                GridItems.Columns.Add(column);
-            }
-        }
-
-        private ContextMenu CreateColumnHeaderContextMenu()
-        {
-            var menu = new ContextMenu();
-
-            var renameItem = new MenuItem { Header = "Zmień nazwę" };
-            renameItem.Click += RenameColumnHeader_Click;
-            menu.Items.Add(renameItem);
-
-            var deleteItem = new MenuItem { Header = "Usuń" };
-            deleteItem.Click += DeleteColumnHeader_Click;
-            menu.Items.Add(deleteItem);
-
-            return menu;
-        }
-
-        private void UpdateSelectionInfo()
-        {
-            if (GridItems.SelectedItem is DataRowView drv)
-            {
-                var name = SafeGet(drv, "Nazwa");
-                var cat = SafeGet(drv, "Kategoria");
-                var val = SafeGet(drv, "Wartość");
-
-                LblSelectedInfo.Text = $"Nazwa: {name} | Kategoria: {cat} | Wartość: {val}";
-
-                var imgPath = SafeGet(drv, "ŚcieżkaObrazu");
-                if (!string.IsNullOrWhiteSpace(imgPath) && File.Exists(imgPath))
-                {
-                    try
-                    {
-                        var bmp = new BitmapImage();
-                        bmp.BeginInit();
-                        bmp.CacheOption = BitmapCacheOption.OnLoad;
-                        bmp.UriSource = new Uri(imgPath, UriKind.Absolute);
-                        bmp.EndInit();
-                        ImgPreview.Source = bmp;
-                    }
-                    catch
-                    {
-                        ImgPreview.Source = null;
-                    }
-                }
-                else
-                {
-                    ImgPreview.Source = null;
-                }
-            }
-            else
-            {
-                LblSelectedInfo.Text = "Brak zaznaczonego wiersza";
-                ImgPreview.Source = null;
-            }
-        }
-
-        private static string SafeGet(DataRowView? drv, string column)
-        {
-            if (drv?.DataView?.Table?.Columns.Contains(column) == true)
-                return drv.Row[column]?.ToString() ?? string.Empty;
-
-            return string.Empty;
-        }
-
-        // Filtr
-        private void ApplyFilter()
-        {
-            var selected = ((CbFilter.SelectedItem as ComboBoxItem)?.Content as string) ?? "";
-            if (!_table.Columns.Contains("Kategoria") || string.IsNullOrWhiteSpace(selected) || selected == "Wszystkie")
-            {
-                _table.DefaultView.RowFilter = "";
-                return;
-            }
-
-            var value = selected.Replace("'", "''");
-            _table.DefaultView.RowFilter = $"[Kategoria] = '{value}'";
-        }
-
-        private void ClearFilterIfInvalid()
-        {
-            if (!_table.Columns.Contains("Kategoria"))
-            {
-                _table.DefaultView.RowFilter = "";
-                if (CbFilter.Items.Count > 0) CbFilter.SelectedIndex = 0; // "Wszystkie"
-            }
-        }
-
-        private void CbFilter_SelectionChanged(object sender, SelectionChangedEventArgs e) => ApplyFilter();
-
-        private void BtnClearFilter_Click(object sender, RoutedEventArgs e)
-        {
-            if (CbFilter.Items.Count > 0) (CbFilter.Items[0] as ComboBoxItem)!.IsSelected = true; // "Wszystkie"
-            ApplyFilter();
-        }
-
-        // Wiersze
-        private void BtnAddRow_Click(object sender, RoutedEventArgs e)
-        {
-            var r = _table.NewRow();
-            if (_table.Columns.Contains("Kategoria"))
-            {
-                var selected = (CbFilter.SelectedItem as ComboBoxItem)?.Content?.ToString();
-                r["Kategoria"] = !string.IsNullOrWhiteSpace(selected) && selected != "Wszystkie" ? selected : "Inne";
-            }
-            _table.Rows.Add(r);
-
-            var view = _table.DefaultView;
-            if (view.Count > 0)
-            {
-                GridItems.SelectedIndex = view.Count - 1;
-                GridItems.ScrollIntoView(view[view.Count - 1]);
-            }
-        }
-
-        private void BtnDeleteRow_Click(object sender, RoutedEventArgs e)
-        {
-            if (GridItems.SelectedItem is DataRowView drv) drv.Row.Delete();
-        }
-
-        // Kolumny (dodawanie)
-        private void BtnAddColumn_Click(object sender, RoutedEventArgs e)
-        {
-            var name = TbNewColumnName.Text?.Trim();
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                MessageBox.Show("Podaj nazwę nowej kolumny.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-            if (_table.Columns.Contains(name))
-            {
-                MessageBox.Show("Taka kolumna już istnieje.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            try
-            {
-                _table.Columns.Add(name, typeof(string));
-                foreach (DataRow row in _table.Rows) row[name] = "";
-
-                BindTable();
-                RebuildGridColumns();
-                TbNewColumnName.Clear();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Błąd podczas dodawania kolumny:\n{ex.Message}", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        // Sort
-        private void BtnSort_Click(object sender, RoutedEventArgs e)
-        {
-            var cols = _table.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToHashSet();
-            var order = new List<string>();
-            if (cols.Contains("Kategoria")) order.Add("[Kategoria] ASC");
-            if (cols.Contains("Nazwa")) order.Add("[Nazwa] ASC");
-            _table.DefaultView.Sort = string.Join(", ", order);
-        }
-
-        // Podgląd / Zasoby
-        private void GridItems_SelectionChanged(object sender, SelectionChangedEventArgs e) => UpdateSelectionInfo();
-
-        private void BtnChooseImage_Click(object sender, RoutedEventArgs e)
-        {
-            if (GridItems.SelectedItem is not DataRowView drv) return;
-
-            var dlg = new OpenFileDialog
-            {
-                Filter = "Obrazy|*.png;*.jpg;*.jpeg;*.bmp;*.gif|Wszystkie pliki|*.*",
-                Title = "Wybierz obraz"
-            };
-            if (dlg.ShowDialog() == true)
-            {
-                EnsureColumn("ŚcieżkaObrazu");
-                drv.Row["ŚcieżkaObrazu"] = dlg.FileName;
-                UpdateSelectionInfo();
-            }
-        }
-
-        private void BtnClearImage_Click(object sender, RoutedEventArgs e)
-        {
-            if (GridItems.SelectedItem is not DataRowView drv) return;
-            if (_table.Columns.Contains("ŚcieżkaObrazu")) drv.Row["ŚcieżkaObrazu"] = "";
-            ImgPreview.Source = null;
-        }
-
-        private void BtnChooseSound_Click(object sender, RoutedEventArgs e)
-        {
-            if (GridItems.SelectedItem is not DataRowView drv) return;
-
-            var dlg = new OpenFileDialog
-            {
-                Filter = "Dźwięki|*.wav;*.mp3;*.ogg;*.flac|Wszystkie pliki|*.*",
-                Title = "Wybierz dźwięk"
-            };
-            if (dlg.ShowDialog() == true)
-            {
-                EnsureColumn("ŚcieżkaDźwięku");
-                drv.Row["ŚcieżkaDźwięku"] = dlg.FileName;
-            }
-        }
-
-        private void BtnPlaySound_Click(object sender, RoutedEventArgs e)
-        {
-            if (GridItems.SelectedItem is not DataRowView drv) return;
-
-            var path = SafeGet(drv, "ŚcieżkaDźwięku");
-            if (!string.IsNullOrWhiteSpace(path) && File.Exists(path))
-            {
-                try
-                {
-                    _player.Open(new Uri(path, UriKind.Absolute));
-                    _player.Play();
-                }
-                catch
-                {
-                    _player.Stop();
-                }
-            }
-        }
-
-        private void BtnStopSound_Click(object sender, RoutedEventArgs e) => _player.Stop();
-
-        private void EnsureColumn(string name)
-        {
-            if (!_table.Columns.Contains(name))
-            {
-                _table.Columns.Add(name, typeof(string));
-                BindTable();
-            }
-        }
-
-        // Zapis / Odczyt JSON
-        private sealed class TableDto
-        {
-            public List<string> Columns { get; set; } = new();
-            public List<Dictionary<string, string?>> Rows { get; set; } = new();
-        }
-
-        private void BtnSave_Click(object sender, RoutedEventArgs e)
-        {
-            var dlg = new SaveFileDialog
-            {
-                Filter = "JSON|*.json",
-                Title = "Zapisz do JSON",
-                AddExtension = true,
-                DefaultExt = "json"
-            };
-            if (dlg.ShowDialog() != true) return;
-
-            var dto = new TableDto
-            {
-                Columns = _table.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList(),
-                Rows = _table.Rows.Cast<DataRow>()
-                    .Select(r => _table.Columns.Cast<DataColumn>()
-                        .ToDictionary(c => c.ColumnName, c => r[c]?.ToString()))
-                    .ToList()
-            };
-
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-            };
-
-            File.WriteAllText(dlg.FileName, JsonSerializer.Serialize(dto, options));
-        }
-
-        private void BtnLoad_Click(object sender, RoutedEventArgs e)
-        {
-            var dlg = new OpenFileDialog
-            {
-                Filter = "JSON|*.json",
-                Title = "Wczytaj z JSON"
-            };
-            if (dlg.ShowDialog() != true) return;
-
-            string json;
-            try
-            {
-                json = File.ReadAllText(dlg.FileName);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Nie udało się odczytać pliku:\n{ex.Message}", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            TableDto dto;
-            try
-            {
-                dto = JsonSerializer.Deserialize<TableDto>(json) ?? new TableDto();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Nieprawidłowy JSON:\n{ex.Message}", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            _table.Clear();
-            _table.Columns.Clear();
-
-            foreach (var col in dto.Columns ?? Enumerable.Empty<string>())
-                _table.Columns.Add(col, typeof(string));
-
-            foreach (var rowDict in dto.Rows ?? Enumerable.Empty<Dictionary<string, string?>>())
-            {
-                var row = _table.NewRow();
-                foreach (DataColumn c in _table.Columns)
-                {
-                    if (rowDict != null && rowDict.TryGetValue(c.ColumnName, out var val))
-                        row[c.ColumnName] = val ?? "";
-                    else
-                        row[c.ColumnName] = "";
-                }
-                _table.Rows.Add(row);
-            }
-
-            BindTable();
-            RebuildGridColumns();
-            ApplyFilter();
-            UpdateSelectionInfo();
-        }
-
-        private void ClearSortIfInvalid()
-        {
-            var sort = _table.DefaultView.Sort;
-            if (string.IsNullOrWhiteSpace(sort)) return;
-
-            var validCols = new HashSet<string>(_table.Columns.Cast<DataColumn>().Select(c => c.ColumnName));
-            var parts = sort.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                            .Select(p => p.Trim())
-                            .ToList();
-
-            var filtered = parts.Where(p =>
-            {
-                var space = p.IndexOf(' ');
-                var col = space > 0 ? p[..space] : p;
-                col = col.Trim('[', ']');
-                return validCols.Contains(col);
-            }).ToList();
-
-            _table.DefaultView.Sort = string.Join(", ", filtered);
-        }
-
-        // Handlery menu kontekstowego nagłówków
-        private void RenameColumnHeader_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is MenuItem mi &&
-                mi.Parent is ContextMenu cm &&
-                cm.PlacementTarget is DataGridColumnHeader header)
-            {
-                var oldName = header.Column.Header?.ToString() ?? "";
-                if (string.IsNullOrWhiteSpace(oldName)) return;
-
-                var newName = Interaction.InputBox("Podaj nową nazwę kolumny:", "Zmień nazwę", oldName)?.Trim();
-                if (string.IsNullOrWhiteSpace(newName) || string.Equals(oldName, newName, StringComparison.Ordinal))
-                    return;
-
-                if (_table.Columns.Contains(newName))
-                {
-                    MessageBox.Show("Kolumna o takiej nazwie już istnieje.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                try
-                {
-                    if (_table.Columns.Contains(oldName))
-                        _table.Columns[oldName]!.ColumnName = newName!;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Nie udało się zmienić nazwy kolumny:\n{ex.Message}", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                BindTable();
-                RebuildGridColumns();
-            }
-        }
-
-        private void DeleteColumnHeader_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is MenuItem mi &&
-                mi.Parent is ContextMenu cm &&
-                cm.PlacementTarget is DataGridColumnHeader header)
-            {
-                var name = header.Column.Header?.ToString();
-                if (string.IsNullOrWhiteSpace(name)) return;
-                if (!_table.Columns.Contains(name)) return;
-
-                _table.Columns.Remove(name);
-                ClearFilterIfInvalid();
-                ClearSortIfInvalid();
-                BindTable();
-                RebuildGridColumns();
-            }
-        }
-    }
-}
+<Window x:Class="VUYAexe1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="VUYAexe1 - Edytor przedmiotów"
+        Height="700" Width="1100"
+        WindowStartupLocation="CenterScreen"
+        Background="#1e1e1e" Foreground="#f0f0f0">
+
+    <Window.Resources>
+        <Style TargetType="DataGridColumnHeader">
+    <Setter Property="ContextMenu">
+        <Setter.Value>
+            <ContextMenu>
+                <MenuItem Header="Zmień nazwę" Click="RenameColumn_Click"/>
+                <MenuItem Header="Usuń" Click="DeleteColumn_Click"/>
+            </ContextMenu>
+        </Setter.Value>
+    </Setter>
+</Style>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#2d2d30"/>
+            <Setter Property="Foreground" Value="#f0f0f0"/>
+            <Setter Property="BorderBrush" Value="#3f3f46"/>
+            <Setter Property="Padding" Value="8,4"/>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#2d2d30"/>
+            <Setter Property="Foreground" Value="#f0f0f0"/>
+            <Setter Property="BorderBrush" Value="#3f3f46"/>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="#2d2d30"/>
+            <Setter Property="Foreground" Value="#f0f0f0"/>
+            <Setter Property="BorderBrush" Value="#3f3f46"/>
+        </Style>
+
+        <Style TargetType="GroupBox">
+            <Setter Property="Background" Value="#252526"/>
+            <Setter Property="Foreground" Value="#f0f0f0"/>
+            <Setter Property="BorderBrush" Value="#3f3f46"/>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+
+        <!-- Styl pozycji listy w ciemnym motywie -->
+        <Style x:Key="DarkComboBoxItem" TargetType="ComboBoxItem">
+            <Setter Property="Foreground" Value="#f0f0f0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}">
+                            <ContentPresenter Margin="4,0"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#333842"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#094771"/>
+                                <Setter Property="Foreground" Value="#ffffff"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Styl ComboBoxa w ciemnym motywie z ciemną listą -->
+        <!-- Styl strzałki dla ComboBoxa -->
+        <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+            <Grid>
+                <Border Background="#2d2d30" BorderBrush="#3f3f46" BorderThickness="1"/>
+                <Path x:Name="Arrow" Fill="#f0f0f0"
+                      HorizontalAlignment="Right" VerticalAlignment="Center"
+                      Margin="0,0,6,0" Data="M 0 0 L 4 4 L 8 0 Z" Width="10" Height="6"/>
+            </Grid>
+        </ControlTemplate>
+
+        <Style x:Key="DarkComboBox" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+            <Setter Property="ItemContainerStyle" Value="{StaticResource DarkComboBoxItem}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton"
+                                          Template="{StaticResource ComboBoxToggleButton}"
+                                          Grid.Column="2"
+                                          Focusable="False"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press"/>
+                            <ContentPresenter x:Name="ContentSite"
+                                              IsHitTestVisible="False"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                              Margin="6,3,24,3"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"/>
+                            <Popup x:Name="Popup"
+                                   Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Slide">
+                                <Grid x:Name="DropDown" SnapsToDevicePixels="True"
+                                      MinWidth="{TemplateBinding ActualWidth}" MaxHeight="200">
+                                    <Border x:Name="DropDownBorder"
+                                            Background="#2d2d30"
+                                            BorderBrush="#3f3f46" BorderThickness="1"/>
+                                    <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasItems" Value="False">
+                                <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="#888"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#2f2f33"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" LastChildFill="False">
+            <Grid DockPanel.Dock="Left" Margin="0,0,10,0" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Filtr label -->
+                    <ColumnDefinition Width="150"/>
+                    <!-- ComboBox -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Wyczyść -->
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Filtr:" VerticalAlignment="Center" Margin="0,0,6,0" Grid.Column="0"/>
+                <ComboBox x:Name="CbFilter" Grid.Column="1" Style="{StaticResource DarkComboBox}"
+                          SelectionChanged="CbFilter_SelectionChanged" Height="24">
+                    <ComboBoxItem Content="Wszystkie" IsSelected="True"/>
+                    <ComboBoxItem Content="Broń"/>
+                    <ComboBoxItem Content="Pancerz"/>
+                    <ComboBoxItem Content="Tarcze"/>
+                    <ComboBoxItem Content="Inne"/>
+                </ComboBox>
+                <Button Content="Wyczyść" Grid.Column="2" Margin="8,0,0,0" Height="24"
+                        Click="BtnClearFilter_Click"/>
+            </Grid>
+
+            <StackPanel Orientation="Horizontal" Margin="10,0,10,0" DockPanel.Dock="Left">
+                <Button Content="+W" Width="40" Height="24" Click="BtnAddRow_Click"/>
+                <Button Content="-W" Width="40" Height="24" Margin="8,0,0,0" Click="BtnDeleteRow_Click"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="10,0,10,0" DockPanel.Dock="Left">
+                <TextBlock Text="Nowa kolumna:" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                <TextBox x:Name="TbNewColumnName" Width="160" Margin="0,0,8,0"/>
+                <Button Content="+K" Width="40" Height="24" Click="BtnAddColumn_Click" Margin="0,0,8,0"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                <Button Content="Sortuj (Kategoria, Nazwa)" Click="BtnSort_Click"/>
+            </StackPanel>
+        </DockPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3.5*"/>
+                <ColumnDefinition Width="2.5*"/>
+            </Grid.ColumnDefinitions>
+
+            <DataGrid x:Name="GridItems"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="False"
+                      SelectionMode="Single"
+                      SelectionUnit="FullRow"
+                      CanUserReorderColumns="True"
+                      CanUserResizeColumns="True"
+                      CanUserSortColumns="True"
+                      Margin="0,8,8,0"
+                      Background="#252526" Foreground="#f0f0f0"
+                      RowBackground="#2d2d30"
+                      AlternatingRowBackground="#1f1f23"
+                      GridLinesVisibility="All"
+                      HorizontalGridLinesBrush="#3f3f46"
+                      VerticalGridLinesBrush="#3f3f46"
+                      ColumnHeaderHeight="28"
+                      SelectionChanged="GridItems_SelectionChanged">
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Nazwa" Binding="{Binding Nazwa}" Width="*"/>
+                    <DataGridTextColumn Header="Kategoria" Binding="{Binding Kategoria}" Width="150"/>
+                    <DataGridTextColumn Header="Opis" Binding="{Binding Opis}" Width="2*"/>
+                    <DataGridTextColumn Header="Wartość" Binding="{Binding Wartość}" Width="120"/>
+                    <DataGridTextColumn Header="ŚcieżkaObrazu" Binding="{Binding ŚcieżkaObrazu}" Width="*"/>
+                    <!-- Celowo brak kolumny ŚcieżkaDźwięku -->
+                </DataGrid.Columns>
+
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#2d2d30"/>
+                        <Setter Property="Foreground" Value="#f0f0f0"/>
+                        <Setter Property="BorderBrush" Value="#3f3f46"/>
+
+                        <!-- Menu kontekstowe po PPM na nagłówku -->
+                        <Setter Property="ContextMenu">
+                            <Setter.Value>
+                                <ContextMenu>
+                                    <MenuItem Header="Zmień nazwę" Click="RenameColumnHeader_Click"/>
+                                    <MenuItem Header="Usuń" Click="DeleteColumnHeader_Click"/>
+                                </ContextMenu>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Background" Value="#2d2d30"/>
+                        <Setter Property="Foreground" Value="#f0f0f0"/>
+                        <Setter Property="BorderBrush" Value="#3f3f46"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#094771"/>
+                                <Setter Property="Foreground" Value="#ffffff"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+            </DataGrid>
+
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" Margin="8,8,0,0">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Podgląd zaznaczenia" FontWeight="Bold" FontSize="14" Margin="0,0,0,8"/>
+                    <TextBlock x:Name="LblSelectedInfo" Text="Brak zaznaczonego wiersza" Margin="0,0,0,12"/>
+
+                    <GroupBox Header="Obraz">
+                        <StackPanel Orientation="Vertical">
+                            <Image x:Name="ImgPreview" Width="380" Height="240" Stretch="Uniform" Margin="0,0,0,6"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Wybierz obraz" Click="BtnChooseImage_Click"/>
+                                <Button Content="Wyczyść" Margin="8,0,0,0" Click="BtnClearImage_Click"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <GroupBox Header="Zapis/Wczytanie">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Zapisz do JSON" Click="BtnSave_Click"/>
+                            <Button Content="Wczytaj z JSON" Margin="8,0,0,0" Click="BtnLoad_Click"/>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,8,0,0">
+            <TextBlock Text="Wskazówka: przestawiaj kolejność kolumn przeciągając ich nagłówki."/>
+        </StackPanel>
+    </Grid>
+</Window>
