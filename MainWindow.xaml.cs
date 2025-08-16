@@ -1,4 +1,5 @@
 using Microsoft.Win32;
+using Microsoft.VisualBasic; // dla Interaction.InputBox
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -27,13 +28,13 @@ namespace VUYAexe1
 
             Application.Current.DispatcherUnhandledException += (s, e) =>
             {
-                MessageBox.Show($"Wystąpił nieobsłużony wyjątek:\n{e.Exception.Message}", "Błąd",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Wystąpił nieobsłużony wyjątek:\n{e.Exception.Message}", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
                 e.Handled = true;
             };
 
             InitTable();
             BindTable();
+            RebuildGridColumns();
             ApplyFilter();
             UpdateSelectionInfo();
 
@@ -79,10 +80,11 @@ namespace VUYAexe1
                     Width = new DataGridLength(1, DataGridLengthUnitType.Star)
                 };
 
-                // Zachowaj bazowy ciemny styl nagłówków i tylko dodaj reakcję na klik
+                // Styl nagłówka oparty na istniejącym + reakcja na klik + menu kontekstowe
                 var baseHeaderStyle = GridItems.ColumnHeaderStyle;
                 var headerStyle = new Style(typeof(DataGridColumnHeader), baseHeaderStyle);
 
+                // Zapamiętanie nazwy zaznaczonej kolumny po LPM (opcjonalne)
                 headerStyle.Setters.Add(new EventSetter(
                     UIElement.MouseLeftButtonUpEvent,
                     new MouseButtonEventHandler((s, e) =>
@@ -90,14 +92,31 @@ namespace VUYAexe1
                         if (s is DataGridColumnHeader header && header.Content is string name)
                         {
                             _selectedColumnName = name;
-                            TbRenameColumnName.Text = name;
                         }
                     })
                 ));
 
+                // Menu kontekstowe PPM: Zmień nazwę / Usuń
+                headerStyle.Setters.Add(new Setter(DataGridColumnHeader.ContextMenuProperty, CreateColumnHeaderContextMenu()));
+
                 column.HeaderStyle = headerStyle;
                 GridItems.Columns.Add(column);
             }
+        }
+
+        private ContextMenu CreateColumnHeaderContextMenu()
+        {
+            var menu = new ContextMenu();
+
+            var renameItem = new MenuItem { Header = "Zmień nazwę" };
+            renameItem.Click += RenameColumnHeader_Click;
+            menu.Items.Add(renameItem);
+
+            var deleteItem = new MenuItem { Header = "Usuń" };
+            deleteItem.Click += DeleteColumnHeader_Click;
+            menu.Items.Add(deleteItem);
+
+            return menu;
         }
 
         private void UpdateSelectionInfo()
@@ -151,10 +170,7 @@ namespace VUYAexe1
         private void ApplyFilter()
         {
             var selected = ((CbFilter.SelectedItem as ComboBoxItem)?.Content as string) ?? "";
-
-            if (!_table.Columns.Contains("Kategoria") ||
-                string.IsNullOrWhiteSpace(selected) ||
-                selected == "Wszystkie")
+            if (!_table.Columns.Contains("Kategoria") || string.IsNullOrWhiteSpace(selected) || selected == "Wszystkie")
             {
                 _table.DefaultView.RowFilter = "";
                 return;
@@ -169,20 +185,15 @@ namespace VUYAexe1
             if (!_table.Columns.Contains("Kategoria"))
             {
                 _table.DefaultView.RowFilter = "";
-                if (CbFilter.Items.Count > 0)
-                    CbFilter.SelectedIndex = 0; // "Wszystkie"
+                if (CbFilter.Items.Count > 0) CbFilter.SelectedIndex = 0; // "Wszystkie"
             }
         }
 
-        private void CbFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ApplyFilter();
-        }
+        private void CbFilter_SelectionChanged(object sender, SelectionChangedEventArgs e) => ApplyFilter();
 
         private void BtnClearFilter_Click(object sender, RoutedEventArgs e)
         {
-            if (CbFilter.Items.Count > 0)
-                (CbFilter.Items[0] as ComboBoxItem)!.IsSelected = true; // "Wszystkie"
+            if (CbFilter.Items.Count > 0) (CbFilter.Items[0] as ComboBoxItem)!.IsSelected = true; // "Wszystkie"
             ApplyFilter();
         }
 
@@ -190,15 +201,11 @@ namespace VUYAexe1
         private void BtnAddRow_Click(object sender, RoutedEventArgs e)
         {
             var r = _table.NewRow();
-
             if (_table.Columns.Contains("Kategoria"))
             {
                 var selected = (CbFilter.SelectedItem as ComboBoxItem)?.Content?.ToString();
-                r["Kategoria"] = !string.IsNullOrWhiteSpace(selected) && selected != "Wszystkie"
-                    ? selected
-                    : "Inne";
+                r["Kategoria"] = !string.IsNullOrWhiteSpace(selected) && selected != "Wszystkie" ? selected : "Inne";
             }
-
             _table.Rows.Add(r);
 
             var view = _table.DefaultView;
@@ -211,35 +218,27 @@ namespace VUYAexe1
 
         private void BtnDeleteRow_Click(object sender, RoutedEventArgs e)
         {
-            if (GridItems.SelectedItem is DataRowView drv)
-                drv.Row.Delete();
+            if (GridItems.SelectedItem is DataRowView drv) drv.Row.Delete();
         }
 
-        // Kolumny
+        // Kolumny (dodawanie)
         private void BtnAddColumn_Click(object sender, RoutedEventArgs e)
         {
             var name = TbNewColumnName.Text?.Trim();
-
             if (string.IsNullOrWhiteSpace(name))
             {
-                MessageBox.Show("Podaj nazwę nowej kolumny.", "Kolumna",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Podaj nazwę nowej kolumny.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
-
             if (_table.Columns.Contains(name))
             {
-                MessageBox.Show("Taka kolumna już istnieje.", "Kolumna",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Taka kolumna już istnieje.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-
             try
             {
                 _table.Columns.Add(name, typeof(string));
-
-                foreach (DataRow row in _table.Rows)
-                    row[name] = "";
+                foreach (DataRow row in _table.Rows) row[name] = "";
 
                 BindTable();
                 RebuildGridColumns();
@@ -247,103 +246,8 @@ namespace VUYAexe1
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Błąd podczas dodawania kolumny:\n{ex.Message}", "Błąd",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Błąd podczas dodawania kolumny:\n{ex.Message}", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
-        private void BtnRenameColumn_Click(object sender, RoutedEventArgs e)
-        {
-            var oldName = _selectedColumnName;
-            if (string.IsNullOrWhiteSpace(oldName))
-            {
-                MessageBox.Show("Zaznacz kolumnę do zmiany nazwy (kliknij jej nagłówek).", "Kolumna",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-
-            var newName = TbRenameColumnName?.Text?.Trim();
-            if (string.IsNullOrWhiteSpace(newName))
-            {
-                MessageBox.Show("Podaj nową nazwę kolumny.", "Kolumna",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-
-            if (string.Equals(oldName, newName, StringComparison.Ordinal))
-                return;
-
-            if (_table.Columns.Contains(newName))
-            {
-                MessageBox.Show("Kolumna o takiej nazwie już istnieje.", "Kolumna",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            try
-            {
-                if (_table.Columns.Contains(oldName))
-                    _table.Columns[oldName!]!.ColumnName = newName!;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    $"Nie udało się zmienić nazwy kolumny:\n{ex.Message}",
-                    "Kolumna",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            TbRenameColumnName?.Clear();
-            _selectedColumnName = newName;
-            BindTable();
-            RebuildGridColumns();
-
-            var newCol = GridItems?.Columns.FirstOrDefault(c =>
-                string.Equals(c.Header?.ToString(), newName, StringComparison.Ordinal));
-            if (newCol != null)
-                GridItems!.CurrentColumn = newCol;
-        }
-
-        private void BtnDeleteColumn_Click(object sender, RoutedEventArgs e)
-        {
-            var name = _selectedColumnName;
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                MessageBox.Show("Zaznacz kolumnę do usunięcia (kliknij jej nagłówek).", "Kolumna",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-
-            if (!_table.Columns.Contains(name))
-                return;
-
-            _table.Columns.Remove(name);
-            ClearFilterIfInvalid();
-            ClearSortIfInvalid();
-            BindTable();
-            RebuildGridColumns();
-            _selectedColumnName = null;
-        }
-
-        private void ClearSortIfInvalid()
-        {
-            var sort = _table.DefaultView.Sort;
-            if (string.IsNullOrWhiteSpace(sort))
-                return;
-
-            var validCols = new HashSet<string>(_table.Columns.Cast<DataColumn>().Select(c => c.ColumnName));
-
-            var parts = sort.Split(',').Select(p => p.Trim()).ToList();
-            var filtered = parts.Where(p =>
-            {
-                var space = p.IndexOf(' ');
-                var col = space > 0 ? p[..space] : p;
-                col = col.Trim('[', ']');
-                return validCols.Contains(col);
-            }).ToList();
-
-            _table.DefaultView.Sort = string.Join(", ", filtered);
         }
 
         // Sort
@@ -357,10 +261,7 @@ namespace VUYAexe1
         }
 
         // Podgląd / Zasoby
-        private void GridItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            UpdateSelectionInfo();
-        }
+        private void GridItems_SelectionChanged(object sender, SelectionChangedEventArgs e) => UpdateSelectionInfo();
 
         private void BtnChooseImage_Click(object sender, RoutedEventArgs e)
         {
@@ -371,7 +272,6 @@ namespace VUYAexe1
                 Filter = "Obrazy|*.png;*.jpg;*.jpeg;*.bmp;*.gif|Wszystkie pliki|*.*",
                 Title = "Wybierz obraz"
             };
-
             if (dlg.ShowDialog() == true)
             {
                 EnsureColumn("ŚcieżkaObrazu");
@@ -383,10 +283,7 @@ namespace VUYAexe1
         private void BtnClearImage_Click(object sender, RoutedEventArgs e)
         {
             if (GridItems.SelectedItem is not DataRowView drv) return;
-
-            if (_table.Columns.Contains("ŚcieżkaObrazu"))
-                drv.Row["ŚcieżkaObrazu"] = "";
-
+            if (_table.Columns.Contains("ŚcieżkaObrazu")) drv.Row["ŚcieżkaObrazu"] = "";
             ImgPreview.Source = null;
         }
 
@@ -399,7 +296,6 @@ namespace VUYAexe1
                 Filter = "Dźwięki|*.wav;*.mp3;*.ogg;*.flac|Wszystkie pliki|*.*",
                 Title = "Wybierz dźwięk"
             };
-
             if (dlg.ShowDialog() == true)
             {
                 EnsureColumn("ŚcieżkaDźwięku");
@@ -426,10 +322,7 @@ namespace VUYAexe1
             }
         }
 
-        private void BtnStopSound_Click(object sender, RoutedEventArgs e)
-        {
-            _player.Stop();
-        }
+        private void BtnStopSound_Click(object sender, RoutedEventArgs e) => _player.Stop();
 
         private void EnsureColumn(string name)
         {
@@ -456,7 +349,6 @@ namespace VUYAexe1
                 AddExtension = true,
                 DefaultExt = "json"
             };
-
             if (dlg.ShowDialog() != true) return;
 
             var dto = new TableDto
@@ -484,7 +376,6 @@ namespace VUYAexe1
                 Filter = "JSON|*.json",
                 Title = "Wczytaj z JSON"
             };
-
             if (dlg.ShowDialog() != true) return;
 
             string json;
@@ -494,8 +385,7 @@ namespace VUYAexe1
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Nie udało się odczytać pliku:\n{ex.Message}", "Błąd",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Nie udało się odczytać pliku:\n{ex.Message}", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -506,8 +396,7 @@ namespace VUYAexe1
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Nieprawidłowy JSON:\n{ex.Message}", "Błąd",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Nieprawidłowy JSON:\n{ex.Message}", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -520,7 +409,6 @@ namespace VUYAexe1
             foreach (var rowDict in dto.Rows ?? Enumerable.Empty<Dictionary<string, string?>>())
             {
                 var row = _table.NewRow();
-
                 foreach (DataColumn c in _table.Columns)
                 {
                     if (rowDict != null && rowDict.TryGetValue(c.ColumnName, out var val))
@@ -528,7 +416,6 @@ namespace VUYAexe1
                     else
                         row[c.ColumnName] = "";
                 }
-
                 _table.Rows.Add(row);
             }
 
@@ -536,6 +423,81 @@ namespace VUYAexe1
             RebuildGridColumns();
             ApplyFilter();
             UpdateSelectionInfo();
+        }
+
+        private void ClearSortIfInvalid()
+        {
+            var sort = _table.DefaultView.Sort;
+            if (string.IsNullOrWhiteSpace(sort)) return;
+
+            var validCols = new HashSet<string>(_table.Columns.Cast<DataColumn>().Select(c => c.ColumnName));
+            var parts = sort.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                            .Select(p => p.Trim())
+                            .ToList();
+
+            var filtered = parts.Where(p =>
+            {
+                var space = p.IndexOf(' ');
+                var col = space > 0 ? p[..space] : p;
+                col = col.Trim('[', ']');
+                return validCols.Contains(col);
+            }).ToList();
+
+            _table.DefaultView.Sort = string.Join(", ", filtered);
+        }
+
+        // Handlery menu kontekstowego nagłówków
+        private void RenameColumnHeader_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem mi &&
+                mi.Parent is ContextMenu cm &&
+                cm.PlacementTarget is DataGridColumnHeader header)
+            {
+                var oldName = header.Column.Header?.ToString() ?? "";
+                if (string.IsNullOrWhiteSpace(oldName)) return;
+
+                var newName = Interaction.InputBox("Podaj nową nazwę kolumny:", "Zmień nazwę", oldName)?.Trim();
+                if (string.IsNullOrWhiteSpace(newName) || string.Equals(oldName, newName, StringComparison.Ordinal))
+                    return;
+
+                if (_table.Columns.Contains(newName))
+                {
+                    MessageBox.Show("Kolumna o takiej nazwie już istnieje.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                try
+                {
+                    if (_table.Columns.Contains(oldName))
+                        _table.Columns[oldName]!.ColumnName = newName!;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Nie udało się zmienić nazwy kolumny:\n{ex.Message}", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                BindTable();
+                RebuildGridColumns();
+            }
+        }
+
+        private void DeleteColumnHeader_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem mi &&
+                mi.Parent is ContextMenu cm &&
+                cm.PlacementTarget is DataGridColumnHeader header)
+            {
+                var name = header.Column.Header?.ToString();
+                if (string.IsNullOrWhiteSpace(name)) return;
+                if (!_table.Columns.Contains(name)) return;
+
+                _table.Columns.Remove(name);
+                ClearFilterIfInvalid();
+                ClearSortIfInvalid();
+                BindTable();
+                RebuildGridColumns();
+            }
         }
     }
 }
