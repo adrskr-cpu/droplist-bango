@@ -19,7 +19,6 @@ namespace VUYAexe1
     public partial class MainWindow : Window
     {
         private readonly DataTable _table = new DataTable("Items");
-        private readonly MediaPlayer _player = new MediaPlayer();
         private string? _selectedColumnName;
 
         public MainWindow()
@@ -38,7 +37,6 @@ namespace VUYAexe1
             ApplyFilter();
             UpdateSelectionInfo();
 
-            _player.MediaEnded += (_, _) => _player.Stop();
         }
 
         private void InitTable()
@@ -51,7 +49,6 @@ namespace VUYAexe1
             _table.Columns.Add("Opis", typeof(string));
             _table.Columns.Add("Wartość", typeof(string));
             _table.Columns.Add("ŚcieżkaObrazu", typeof(string));
-            _table.Columns.Add("ŚcieżkaDźwięku", typeof(string));
 
             var r = _table.NewRow();
             r["Nazwa"] = "Miecz żelazny";
@@ -80,44 +77,11 @@ namespace VUYAexe1
                     Width = new DataGridLength(1, DataGridLengthUnitType.Star)
                 };
 
-                // Styl nagłówka oparty na istniejącym + reakcja na klik + menu kontekstowe
-                var baseHeaderStyle = GridItems.ColumnHeaderStyle;
-                var headerStyle = new Style(typeof(DataGridColumnHeader), baseHeaderStyle);
 
-                // Zapamiętanie nazwy zaznaczonej kolumny po LPM (opcjonalne)
-                headerStyle.Setters.Add(new EventSetter(
-                    UIElement.MouseLeftButtonUpEvent,
-                    new MouseButtonEventHandler((s, e) =>
-                    {
-                        if (s is DataGridColumnHeader header && header.Content is string name)
-                        {
-                            _selectedColumnName = name;
-                        }
-                    })
-                ));
-
-                // Menu kontekstowe PPM: Zmień nazwę / Usuń
-                headerStyle.Setters.Add(new Setter(DataGridColumnHeader.ContextMenuProperty, CreateColumnHeaderContextMenu()));
-
-                column.HeaderStyle = headerStyle;
                 GridItems.Columns.Add(column);
             }
         }
 
-        private ContextMenu CreateColumnHeaderContextMenu()
-        {
-            var menu = new ContextMenu();
-
-            var renameItem = new MenuItem { Header = "Zmień nazwę" };
-            renameItem.Click += RenameColumnHeader_Click;
-            menu.Items.Add(renameItem);
-
-            var deleteItem = new MenuItem { Header = "Usuń" };
-            deleteItem.Click += DeleteColumnHeader_Click;
-            menu.Items.Add(deleteItem);
-
-            return menu;
-        }
 
         private void UpdateSelectionInfo()
         {
@@ -221,34 +185,6 @@ namespace VUYAexe1
             if (GridItems.SelectedItem is DataRowView drv) drv.Row.Delete();
         }
 
-        // Kolumny (dodawanie)
-        private void BtnAddColumn_Click(object sender, RoutedEventArgs e)
-        {
-            var name = TbNewColumnName.Text?.Trim();
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                MessageBox.Show("Podaj nazwę nowej kolumny.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-            if (_table.Columns.Contains(name))
-            {
-                MessageBox.Show("Taka kolumna już istnieje.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-            try
-            {
-                _table.Columns.Add(name, typeof(string));
-                foreach (DataRow row in _table.Rows) row[name] = "";
-
-                BindTable();
-                RebuildGridColumns();
-                TbNewColumnName.Clear();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Błąd podczas dodawania kolumny:\n{ex.Message}", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
 
         // Sort
         private void BtnSort_Click(object sender, RoutedEventArgs e)
@@ -287,42 +223,7 @@ namespace VUYAexe1
             ImgPreview.Source = null;
         }
 
-        private void BtnChooseSound_Click(object sender, RoutedEventArgs e)
-        {
-            if (GridItems.SelectedItem is not DataRowView drv) return;
 
-            var dlg = new OpenFileDialog
-            {
-                Filter = "Dźwięki|*.wav;*.mp3;*.ogg;*.flac|Wszystkie pliki|*.*",
-                Title = "Wybierz dźwięk"
-            };
-            if (dlg.ShowDialog() == true)
-            {
-                EnsureColumn("ŚcieżkaDźwięku");
-                drv.Row["ŚcieżkaDźwięku"] = dlg.FileName;
-            }
-        }
-
-        private void BtnPlaySound_Click(object sender, RoutedEventArgs e)
-        {
-            if (GridItems.SelectedItem is not DataRowView drv) return;
-
-            var path = SafeGet(drv, "ŚcieżkaDźwięku");
-            if (!string.IsNullOrWhiteSpace(path) && File.Exists(path))
-            {
-                try
-                {
-                    _player.Open(new Uri(path, UriKind.Absolute));
-                    _player.Play();
-                }
-                catch
-                {
-                    _player.Stop();
-                }
-            }
-        }
-
-        private void BtnStopSound_Click(object sender, RoutedEventArgs e) => _player.Stop();
 
         private void EnsureColumn(string name)
         {
@@ -446,58 +347,4 @@ namespace VUYAexe1
             _table.DefaultView.Sort = string.Join(", ", filtered);
         }
 
-        // Handlery menu kontekstowego nagłówków
-        private void RenameColumnHeader_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is MenuItem mi &&
-                mi.Parent is ContextMenu cm &&
-                cm.PlacementTarget is DataGridColumnHeader header)
-            {
-                var oldName = header.Column.Header?.ToString() ?? "";
-                if (string.IsNullOrWhiteSpace(oldName)) return;
-
-                var newName = Interaction.InputBox("Podaj nową nazwę kolumny:", "Zmień nazwę", oldName)?.Trim();
-                if (string.IsNullOrWhiteSpace(newName) || string.Equals(oldName, newName, StringComparison.Ordinal))
-                    return;
-
-                if (_table.Columns.Contains(newName))
-                {
-                    MessageBox.Show("Kolumna o takiej nazwie już istnieje.", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                try
-                {
-                    if (_table.Columns.Contains(oldName))
-                        _table.Columns[oldName]!.ColumnName = newName!;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Nie udało się zmienić nazwy kolumny:\n{ex.Message}", "Kolumna", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                BindTable();
-                RebuildGridColumns();
-            }
-        }
-
-        private void DeleteColumnHeader_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is MenuItem mi &&
-                mi.Parent is ContextMenu cm &&
-                cm.PlacementTarget is DataGridColumnHeader header)
-            {
-                var name = header.Column.Header?.ToString();
-                if (string.IsNullOrWhiteSpace(name)) return;
-                if (!_table.Columns.Contains(name)) return;
-
-                _table.Columns.Remove(name);
-                ClearFilterIfInvalid();
-                ClearSortIfInvalid();
-                BindTable();
-                RebuildGridColumns();
-            }
-        }
-    }
-}
+        
