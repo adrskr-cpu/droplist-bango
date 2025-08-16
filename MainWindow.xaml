@@ -8,14 +8,6 @@
 
     <Window.Resources>
         <Style TargetType="DataGridColumnHeader">
-    <Setter Property="ContextMenu">
-        <Setter.Value>
-            <ContextMenu>
-                <MenuItem Header="Zmień nazwę" Click="RenameColumn_Click"/>
-                <MenuItem Header="Usuń" Click="DeleteColumn_Click"/>
-            </ContextMenu>
-        </Setter.Value>
-    </Setter>
 </Style>
         <Style TargetType="Button">
             <Setter Property="Background" Value="#2d2d30"/>
@@ -172,9 +164,6 @@
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" Margin="10,0,10,0" DockPanel.Dock="Left">
-                <TextBlock Text="Nowa kolumna:" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                <TextBox x:Name="TbNewColumnName" Width="160" Margin="0,0,8,0"/>
-                <Button Content="+K" Width="40" Height="24" Click="BtnAddColumn_Click" Margin="0,0,8,0"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
