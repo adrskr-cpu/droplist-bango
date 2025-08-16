@@ -346,5 +346,3 @@ namespace VUYAexe1
 
             _table.DefaultView.Sort = string.Join(", ", filtered);
         }
-
-        
